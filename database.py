@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 
 Base = declarative_base()
 
-
+# This file creates the schema of the database as well as the classes to manipulate the database using SQLAlchemy
 class Store(Base):
     __tablename__ = "stores"
     store_id = Column("store_id", Integer, Identity(start=0, cycle=True), primary_key=True, nullable=False)
