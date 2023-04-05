@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700;900&display=swap');
+
+
+h1, label {
+    font-family: 'Kanit', sans-serif;
+}
+.desc {
+    height: 200px;
+    width: 400px;
+    resize: none;
+    padding: 4px 4px;
+}
+text, input, select {
+    font-family: 'Kanit', sans-serif;
+}
+
+.cancel, .submit, .upload-image {
+    padding: 2px 10px;
+    background-color: rgba(136,244,134,1);
+    color: black;
+    border: solid;
+    border-width: 1px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease 0s;
+}
+.upload-image {
+    margin-bottom: 4px;
+}
+
+.cancel, submit {
+    margin-top: 4px;
+}
+
+.quantity, .size-value {
+    width: 50px;
+    text-align: right;
+}
+
+.name {
+    width: 400px;
+}
+.desc {
+    width: 630px;
+}

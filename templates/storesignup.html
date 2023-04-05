@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>{% block title %}AStore Signup{%endblock%}</title>
+    {% block head %}
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css')}}">
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/storesignup.css')}}">
+    {%endblock%}
+  </head>
+  <body>
+  {% block content %}
+    <form>
+      <h1>Store Sign Up</h1>
+      <div class="row">
+        <input
+          type="text"
+          id="username"
+          name="username"
+          required
+          placeholder="Username"
+        />
+      </div>
+      <div class="row">
+        <input
+          type="password"
+          id="password"
+          name="password"
+          required
+          placeholder="Password"
+        />
+
+        <input
+          type="password"
+          id="confirm-password"
+          name="confirm-password"
+          required
+          placeholder="Confirm password"
+        />
+      </div>
+      <div class="row">
+        <input
+          type="text"
+          id="store-name"
+          name="store-name"
+          required
+          placeholder="Store name"
+        />
+      </div>
+      <div class="row">
+        <input
+          type="text"
+          id="street-address"
+          name="street-address"
+          required
+          placeholder="Street address"
+        />
+      </div>
+      <div class="row">
+        <div class="form-field-container">
+          <input
+            type="text"
+            id="city"
+            name="city"
+            required
+            placeholder="City"
+          />
+          <input
+            type="text"
+            id="state"
+            name="state"
+            required
+            placeholder="State"
+          />
+          <input
+            type="text"
+            id="country"
+            name="country"
+            required
+            placeholder="Country"
+          />
+        </div>
+      </div>
+
+      <div class="row">
+        <input
+          type="text"
+          id="zip-code"
+          name="zip-code"
+          required
+          placeholder="Zip code"
+        />
+      </div>
+      <button class="button">Cancel</button>
+      <button class="button">Submit</button>
+    </form>
+  {%endblock%}
+  </body>
+</html>

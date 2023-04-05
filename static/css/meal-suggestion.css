@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+
+.sidebar {
+    position: fixed;
+    left: 0;
+    height: 100%;
+    width: 200px;
+    background-color: #B8B8B8;
+    display: flex;
+}
+input[class=priceinput]{
+    width: 50px;
+    height: 20px;
+    margin-right: 20px;
+}
+input[class=dateinput]{
+    width: 55px;
+    height: 20px;
+    margin-right: 10px;
+}
+.sidebar header {
+    background-color: #B8B8B8;
+    display: block;
+    color: black;
+    font-size: 22px;
+    text-align: center;
+    user-select: none;
+    width: 100%;
+    line-height: 70px;
+}
+
+.filter-title{
+    font-size: 26px;
+    text-align: center;
+}
+
+.sidebar ul {
+    display: block;
+    height: 100%;
+    width: 100%;
+    line-height: 65px
+    font-size: 20px;
+    padding-left: 20px;
+    list-style: none;
+}
+
+.browse-listings {
+    list-style: none;
+}
+
+.browse-listings li {
+    display: inline-grid;
+    padding: 30px 30px;
+}
+
+.list-img {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 4px;
+}
+
+.browse-body {
+    position: fixed;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    margin: 10px 200px;
+    padding: 20px 20px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.fndstr {
+    margin: 0 5px;
+    padding: 2px 10px;
+    background-color: rgba(136,244,134,1);
+    color: black;
+    border: solid;
+    border-width: 1px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease 0s;
+}

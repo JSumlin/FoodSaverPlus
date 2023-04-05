@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Find Store{%endblock%}</title>
+  {% block head %}
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css')}}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/homepage.css')}}">
+  {%endblock%}
+</head>
+<body>
+  {% block content %}
+    <h3>Your item has been reserved. It is available for pickup at [insert address].</h3>
+  {%endblock%}
+</body>
+</html>

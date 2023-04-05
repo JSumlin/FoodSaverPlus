@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %} {% endblock %} - FoodSaver+</title>
+    {% block head %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css')}}">
+    {%endblock%}
+</head>
+<body>
+    <header class="page-head">
+        <a href="/"><img class="logo" src="static/Images/home-logo.png" alt="Home"></a>
+        <a class="lgnbut" href="#">Login</a>
+    </header>
+    {% block content %}
+
+    {% endblock %}
+</body>
+</html>

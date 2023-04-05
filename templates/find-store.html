@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Find Store{%endblock%}</title>
+    {% block head %}
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css')}}">
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/find-store-style.css')}}">
+    {%endblock%}
+</head>
+<body>
+  {% block content%}
+    <div style="padding: 0 20px;">
+      <h1>Find the Closest Stores</h1>
+      <div>
+        <img src="../static/Images/google_maps.jpg" class="map" style="margin-right: 20px;">
+        <input type="text" placeholder="Zip Code" style="position: absolute; top: 100px;">
+      </div>
+    </div>
+  {%endblock%}
+</body>
+</html>

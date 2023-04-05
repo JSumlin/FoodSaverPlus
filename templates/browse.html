@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Browse{%endblock%}</title>
+    {% block head %}
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css')}}">
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/browse-style.css')}}">
+    {%endblock%}
+</head>
+<body>
+    {% block content %}
+    <div class="sidebar">
+        <ul>
+            <li class="filter-title">Filters</li>
+            <li class="filter-text">Price:</li>
+            <li><input type="number" class="priceinput" name="mininput" placeholder="Min."><input type="number" class="priceinput" name="maxprice" placeholder="Max."></li>
+            <li class="filter-text">Expires after:</li>
+            <li><input type="number" class="dateinput" name="month" placeholder="Month"><input type="number" class="dateinput" name="day" placeholder="Day"></li>
+        </ul>
+    </div>
+    <div class="browse-body">
+        <h1>Browse</h1>
+        <div><input type="text" name="search" placeholder="Search"><a class="fndstr" href="#">Find Store</a></div>
+        <ul class="browse-listings">
+            <li><a href="#"><img class="list-img" src="static/Images/kroger ground beef.png"><br>Kroger Ground Beef<br>Expires 3/10<br>$1.00</a></li>
+            <li><a href="#"><img class="list-img" src="static/Images/priv sel bread.png"><br>Private Selection Bread<br>Expires 3/10<br>$1.00</a></li>
+        </ul>
+    </div>
+    {%endblock%}
+</body>
+</html>

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}View Item{%endblock%}</title>
+  {% block head %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/view-style.css')}}">
+  {%endblock%}
+</head>
+<body>
+  {% block content %}
+    <div><a class="bck" href="/browse">Back to Browse</a></div>
+    <div class="top">
+      <div>
+        <img class="itmimg" src="..\static\Images\kroger ground beef.png" alt="Kroger Ground Beef">
+      </div>
+      <div class="rsrv-pnl">
+        <label class="qlabel">Quantity:</label>
+        <input type="number" class="quantity" name="quantity" value="1" min="1">
+        <a class="rsrv" href="#">Reserve</a>
+      </div>
+    </div>
+    <div class="btm">
+      <div><Label class="name">Kroger Ground Beef</Label></div>
+      <div><Label class="exp">Expires 3/10</Label></div>
+      <div><Label class="price">$1.00</Label></div>
+      <div><Label class="desc">Description:</Label></div>
+      <div class="dtext"><p>5lb Kroger brand ground beef</p></div>
+    </div>
+  {%endblock%}
+</body>
+</html>

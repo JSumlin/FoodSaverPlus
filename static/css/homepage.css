@@ -1,0 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+h1 {
+    margin-bottom: 10px;
+}
+.browse {
+    padding: 9px 25px;
+    background-color: rgba(136,244,134,1);
+    background-repeat: no-repeat;
+    color: black;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease 0s;
+}
+
+.browse:hover {
+    background-color: rgba(136,244,134,0.8);
+}
