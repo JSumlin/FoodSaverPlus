@@ -2,8 +2,7 @@ from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, CHAR, Identity, MetaData, CheckConstraint, \
     select, DateTime, Float, Boolean, Date
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Query
+from sqlalchemy.orm import sessionmaker, Query, declarative_base
 from flask import Flask
 
 # Uses SQLAlchemy to create the database and table objects for database management.
@@ -25,13 +24,18 @@ class Store(Base):
     geocode = Column("geocode", String, nullable=False)
 
     @staticmethod
-    def set_address(store_id, street, city, state, country, zip):
+    def set_address(session, store_id, street, city, state, country, zip):
         store = session.query(Store).filter_by(store_id=store_id).first()
         store.street = street
         store.city = city
         store.state = state
         store.country = country
         store.zip = zip
+
+    @staticmethod
+    def add(session, username, password, store_name, street, city, state, country, zip):
+        new_store = Store(username, password, store_name, street, city, state, country, zip)
+        session.add(new_store)
         session.commit()
 
     def __init__(self, username, password, store_name, street, city, state, country, zip):
@@ -43,7 +47,7 @@ class Store(Base):
         self.state = state
         self.country = country
         self.zip = zip
-        self.geocode="standin"
+        self.geocode = "standin"
 
     def __repr__(self):
         return f"({self.store_id}, {self.username}, {self.password}, {self.store_name}, {self.street}, {self.city}, " \
@@ -121,25 +125,25 @@ class UserPost(Base):
     active = Column("active", Boolean, nullable=False)
 
     @staticmethod
-    def set_price(post_id, price):
+    def set_price(session, post_id, price):
         post = session.query(UserPost).filter_by(post_id=post_id).first()
         post.price = price
         session.commit()
 
     @staticmethod
-    def set_active(post_id, isActive):
+    def set_active(session, post_id, isActive):
         post = session.query(UserPost).filter_by(post_id=post_id).first()
         post.active = isActive
         session.commit()
 
     @staticmethod
-    def set_quantity(post_id, quantity):
+    def set_quantity(session, post_id, quantity):
         post = session.query(UserPost).filter_by(post_id=post_id).first()
         post.quantity = quantity
         session.commit()
 
     @staticmethod
-    def set_exp(post_id, exp_date):
+    def set_exp(session, post_id, exp_date):
         post = session.query(UserPost).filter_by(post_id=post_id).first()
         post.exp_date = exp_date
         session.commit()
@@ -172,11 +176,12 @@ class Reservation(Base):
         return f"({self.rsvp_id}, {self.post_id}, {self.rsvp_quantity}, {self.rsvp_timestamp})"
 
 
-engine = create_engine("sqlite:///foodsaverplus.db", echo=True)
-Base.metadata.create_all(bind=engine)
-
-Session = sessionmaker(bind=engine)
-session = Session()
+# Base = declarative_base()
+# engine = create_engine("sqlite:///foodsaverplus.db", echo=True)
+# Base.metadata.create_all(bind=engine)
+#
+# Session = sessionmaker(bind=engine)
+# session = Session()
 
 # store1 = Store("username1", "password1", "kroger", "185 brown rd", "stockbridge", "ga", "united states", 30281)
 # store2 = Store("username2", "password2", "kroger2", "186 brown rd", "stockbridge", "ga", "united states", 30281)
@@ -192,7 +197,7 @@ session = Session()
 # session.add(item1)
 # session.commit()
 
-# results = session.query(Store).all()
+# results = main.session.query(Store).all()
 # print(results)
 # results = session.query(Ingredient).all()
 # print(results)

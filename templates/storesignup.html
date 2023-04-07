@@ -10,7 +10,7 @@
   </head>
   <body>
   {% block content %}
-    <form>
+    <form method="post">
       <h1>Store Sign Up</h1>
       <div class="row">
         <input
@@ -91,7 +91,7 @@
           placeholder="Zip code"
         />
       </div>
-      <button class="button">Cancel</button>
+      <button type="submit" class="button">Cancel</button>
       <button class="button">Submit</button>
     </form>
   {%endblock%}
