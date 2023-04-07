@@ -30,5 +30,7 @@ TO-DO:
 8). Implement meal suggestion functionality (High priority)
 
 9). Implement Google Maps API functionality (Medium priority)
+
 10). Implement Browse filters (Low priority)
+
 11). Make aspects of the pages change based on if a user is signed in (Low priority)
