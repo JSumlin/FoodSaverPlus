@@ -14,13 +14,21 @@ Python, Flask, SQLite, SQLAlchemy, HTML/CSS.
 
 TO-DO:
 1). Create store signup functionality (nearly complete) (High priority)
+
 2). Add sign in functionality (High priority)
+
 3). Add functionality so that stores that are signed in may add items for sale. (High priority)
+
 4). Fill out meals/ingredients databases. (High priority)
+
 5). Make it so that item postings are properly queried from the database and displayed on the browse page. The soonest expiration date of an item should be displayed. (High priority)
+
 6). Implement reservation functionality. Reservations should reserve items with the soonest expiration date first. (High priority)
+
 7). Fix design problem for html pages (Low priority)
+
 8). Implement meal suggestion functionality (High priority)
+
 9). Implement Google Maps API functionality (Medium priority)
 10). Implement Browse filters (Low priority)
 11). Make aspects of the pages change based on if a user is signed in (Low priority)
