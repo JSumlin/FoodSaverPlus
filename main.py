@@ -6,6 +6,7 @@ from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, CHAR
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
+from database import *
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = str(os.urandom(24).hex())

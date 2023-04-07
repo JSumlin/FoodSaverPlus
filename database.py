@@ -1,12 +1,16 @@
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, CHAR, Identity, MetaData, CheckConstraint
+from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, CHAR, Identity, MetaData, CheckConstraint, \
+    select, DateTime, Float, Boolean, Date
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Query
+from flask import Flask
+
+# Uses SQLAlchemy to create the database and table objects for database management.
 
 Base = declarative_base()
 
-# This file creates the schema of the database as well as the classes to manipulate the database using SQLAlchemy
+
 class Store(Base):
     __tablename__ = "stores"
     store_id = Column("store_id", Integer, Identity(start=0, cycle=True), primary_key=True, nullable=False)
@@ -19,6 +23,16 @@ class Store(Base):
     country = Column("country", String, nullable=False)
     zip = Column("zip", Integer, nullable=False)
     geocode = Column("geocode", String, nullable=False)
+
+    @staticmethod
+    def set_address(store_id, street, city, state, country, zip):
+        store = session.query(Store).filter_by(store_id=store_id).first()
+        store.street = street
+        store.city = city
+        store.state = state
+        store.country = country
+        store.zip = zip
+        session.commit()
 
     def __init__(self, username, password, store_name, street, city, state, country, zip):
         self.username = username
@@ -41,7 +55,7 @@ class Item(Base):
     item_id = Column("item_id", Integer, Identity(start=0, cycle=True), primary_key=True, nullable=False)
     item_name = Column("item_name", String, nullable=False)
     item_desc = Column("item_desc", String)
-    item_img =Column("item_img", String, unique=True)
+    item_img = Column("item_img", String, unique=True)
     ing_id = Column("ing_id", Integer, ForeignKey("ingredients.ing_id"))
     store_id = Column("store_id", Integer, ForeignKey("stores.store_id"), nullable=False)
 
@@ -96,14 +110,39 @@ class Recipe(Base):
         return f"({self.recipe_id}, {self.meal_id}, {self.ing_id})"
 
 
-class User_Post(Base):
+class UserPost(Base):
     __tablename__ = "posts"
     post_id = Column("post_id", Integer, Identity(start=0, cycle=True), primary_key=True, nullable=False)
     item_id = Column("item_id", Integer, ForeignKey("items.item_id"), nullable=False)
     post_quantity = Column("post_quantity", Integer, CheckConstraint("post_quantity>0"), nullable=False)
-    exp_date = Column("exp_date", String, nullable=False)
-    post_timestamp = Column("post_timestamp", String, nullable=False)
-    status = Column("status", String, nullable=False)
+    price = Column("price", Float, nullable=False)
+    exp_date = Column("exp_date", Date, nullable=False)
+    post_timestamp = Column("post_timestamp", DateTime, nullable=False)
+    active = Column("active", Boolean, nullable=False)
+
+    @staticmethod
+    def set_price(post_id, price):
+        post = session.query(UserPost).filter_by(post_id=post_id).first()
+        post.price = price
+        session.commit()
+
+    @staticmethod
+    def set_active(post_id, isActive):
+        post = session.query(UserPost).filter_by(post_id=post_id).first()
+        post.active = isActive
+        session.commit()
+
+    @staticmethod
+    def set_quantity(post_id, quantity):
+        post = session.query(UserPost).filter_by(post_id=post_id).first()
+        post.quantity = quantity
+        session.commit()
+
+    @staticmethod
+    def set_exp(post_id, exp_date):
+        post = session.query(UserPost).filter_by(post_id=post_id).first()
+        post.exp_date = exp_date
+        session.commit()
 
     def __int__(self, item_id, post_quantity, exp_date, post_timestamp, status):
         self.item_id = item_id
@@ -122,7 +161,7 @@ class Reservation(Base):
     rsvp_id = Column("rsvp_id", Integer, Identity(start=0, cycle=True), primary_key=True, nullable=False)
     post_id = Column("post_id", Integer, ForeignKey("posts.post_id"), nullable=False)
     rsvp_quantity = Column("rsvp_quantity", Integer, CheckConstraint("rsvp_quantity>0"), nullable=False)
-    rsvp_timestamp = Column("rsvp_timestamp", String, nullable=False)
+    rsvp_timestamp = Column("rsvp_timestamp", DateTime, nullable=False)
 
     def __int__(self, post_id, rsvp_quantity, rsvp_timestamp):
         self.post_id = post_id
@@ -153,9 +192,9 @@ session = Session()
 # session.add(item1)
 # session.commit()
 
-results = session.query(Store).all()
-print(results)
-results = session.query(Ingredient).all()
-print(results)
-results = session.query(Item).all()
-print(results)
+# results = session.query(Store).all()
+# print(results)
+# results = session.query(Ingredient).all()
+# print(results)
+# results = session.query(Item).all()
+# print(results)
