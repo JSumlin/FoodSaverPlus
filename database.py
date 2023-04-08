@@ -5,16 +5,14 @@ from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, CHAR,
 from sqlalchemy.orm import sessionmaker, Query, declarative_base
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask
+from flask_login import UserMixin
 
-# Uses SQLAlchemy to create the database and table objects for database management.
+# Uses SQLAlchemy to create the database and table objects.
 
 Base = declarative_base()
 
 
-class Store(Base):
-    @property
-    def password(self):
-        return self._password
+class Store(UserMixin, Base):
 
     __tablename__ = "stores"
     store_id = Column("store_id", Integer, Identity(start=0, cycle=True), primary_key=True, nullable=False)
@@ -27,6 +25,9 @@ class Store(Base):
     country = Column("country", String, nullable=False)
     zip = Column("zip", Integer, nullable=False)
     geocode = Column("geocode", String, nullable=False)
+
+    def get_id(self):
+        return self.store_id
 
     @staticmethod
     def set_address(session, store_id, street, city, state, country, zip):
@@ -183,32 +184,3 @@ class Reservation(Base):
 
     def __repr__(self):
         return f"({self.rsvp_id}, {self.post_id}, {self.rsvp_quantity}, {self.rsvp_timestamp})"
-
-
-# Base = declarative_base()
-# engine = create_engine("sqlite:///foodsaverplus.db", echo=True)
-# Base.metadata.create_all(bind=engine)
-#
-# Session = sessionmaker(bind=engine)
-# session = Session()
-
-# store1 = Store("username1", "password1", "kroger", "185 brown rd", "stockbridge", "ga", "united states", 30281)
-# store2 = Store("username2", "password2", "kroger2", "186 brown rd", "stockbridge", "ga", "united states", 30281)
-#
-# ing1 = Ingredient("spaghetti")
-#
-# item1 = Item("spaghetti", "it's spaghetti", "../static/Images/spaghetti.png", 1, 2)
-
-
-# session.add(store1)
-# session.add(store2)
-# session.add(ing1)
-# session.add(item1)
-# session.commit()
-
-# results = main.session.query(Store).all()
-# print(results)
-# results = session.query(Ingredient).all()
-# print(results)
-# results = session.query(Item).all()
-# print(results)

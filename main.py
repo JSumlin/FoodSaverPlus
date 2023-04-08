@@ -1,5 +1,6 @@
 import sqlite3
-from flask import Flask, render_template, request, url_for, flash, redirect
+from flask import Flask, render_template, request, url_for, flash, redirect, Blueprint
+from flask_login import login_required, current_user, LoginManager, login_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
@@ -10,19 +11,24 @@ import os
 from database import *
 from dbManager import Checks
 
-app = Flask(__name__)
-app.config["SECRET_KEY"] = str(os.urandom(24).hex())
-
-# conn = sqlite3.connect('foodsaverplus.db', check_same_thread=False)
-# conn.execute("PRAGMA foreign_keys = 1")
-# cursor = conn.cursor()
-# conn.commit()
-
 # For SQLAlchemy to interact with SQLite
 engine = create_engine("sqlite:///foodsaverplus.db", echo=True)
 Session = sessionmaker(bind=engine)
 session = Session()
-print(session.query(Store).all())
+
+# main = Blueprint("main", __name__)
+app = Flask(__name__)
+app.config["SECRET_KEY"] = str(os.urandom(24).hex())
+
+login_manager = LoginManager()
+login_manager.login_view = "login"
+login_manager.init_app(app)
+
+
+@login_manager.user_loader
+def load_user(store_id):
+    return session.query(Store).filter_by(store_id=store_id).first()
+
 
 @app.route('/')
 def index():
@@ -67,7 +73,9 @@ def post_conf():
 @app.route('/login', methods=('GET', 'POST'))
 def login():
     if request.method == 'POST':
+        store = session.query(Store).filter_by(username=request.form["Username"]).first()
         if Checks.valid_login(session, request.form["Username"], request.form["Password"]):
+            login_user(store, remember=True)
             return render_template('login.html')
     return render_template('login.html')
 
@@ -92,6 +100,19 @@ def store_signup():
             # flash("Sign up successful.")
             # redirect("/")
     return render_template('/storesignup.html')
+
+
+@app.route('/profile')
+@login_required
+def profile():
+    return render_template('profile.html', name=current_user.username)
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
 
 
 app.run(debug=True)

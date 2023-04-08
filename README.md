@@ -13,11 +13,8 @@ Utilizies:
 Python, Flask, SQLite, SQLAlchemy, HTML/CSS.
 
 TO-DO:
-1). Create store signup functionality (nearly complete) (High priority)
 
-2). Add sign in functionality (High priority)
-
-3). Add functionality so that stores that are signed in may add items for sale. (High priority)
+3). Add functionality so that only stores that are signed in may add items for sale. (High priority)
 
 4). Fill out meals/ingredients databases. (High priority)
 
@@ -34,3 +31,9 @@ TO-DO:
 10). Implement Browse filters (Low priority)
 
 11). Make aspects of the pages change based on if a user is signed in (Low priority)
+
+COMPLETED:
+
+1). Store sign up functionality is operational. Google Maps API elements not included.
+
+2). Users may now sign in. How being signed in affects site has not been implemented.
