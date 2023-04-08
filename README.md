@@ -14,7 +14,7 @@ Python, Flask, SQLite, SQLAlchemy, HTML/CSS.
 
 TO-DO:
 
-3). Add functionality so that only stores that are signed in may add items for sale. (High priority)
+3). Add functionality so that users may add items for sale. (High priority)
 
 4). Fill out meals/ingredients databases. (High priority)
 
@@ -36,4 +36,5 @@ COMPLETED:
 
 1). Store sign up functionality is operational. Google Maps API elements not included.
 
-2). Users may now sign in. How being signed in affects site has not been implemented.
+2). Users may now sign in. Certain pages require you be logged in to access them. Others, namely the login in and signup pages,
+redirect users who are logged in to the home page. Logging out redirects you to the login page.

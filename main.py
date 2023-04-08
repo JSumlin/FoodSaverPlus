@@ -61,6 +61,7 @@ def rsvp_conf():
 
 
 @app.route('/add-item')
+@login_required
 def add_item():
     return render_template('add-item.html')
 
@@ -72,16 +73,20 @@ def post_conf():
 
 @app.route('/login', methods=('GET', 'POST'))
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
     if request.method == 'POST':
         store = session.query(Store).filter_by(username=request.form["Username"]).first()
         if Checks.valid_login(session, request.form["Username"], request.form["Password"]):
             login_user(store, remember=True)
-            return render_template('login.html')
+            return redirect(url_for('index'))
     return render_template('login.html')
 
 
 @app.route('/store-signup', methods=('GET', 'POST'))
 def store_signup():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
     if request.method == 'POST':
         if request.form["password"] != request.form["confirm-password"]:
             flash("Passwords do not match.")
@@ -112,7 +117,7 @@ def profile():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('login'))
 
 
 app.run(debug=True)
