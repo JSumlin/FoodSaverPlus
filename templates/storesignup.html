@@ -10,6 +10,9 @@
   </head>
   <body>
   {% block content %}
+    {% for message in get_flashed_messages() %}
+      <div class="flshmsg">{{ message }}</div>
+    {% endfor %}
     <form method="post">
       <h1>Store Sign Up</h1>
       <div class="row">

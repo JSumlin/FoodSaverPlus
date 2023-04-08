@@ -11,10 +11,13 @@
   {% block content %}
     <h1>Login Page</h1>
 	  <h2>Username</h2>
-	  <input type="text" name="Username" placeholder="Username">
-	  <h2>Password</h2>
-	  <input type="text" name="Password" placeholder="Password"><br><br><br>
-	  <a class="browse" href="#">Login</a><br><br><br>
+    <form method="post">
+      <input type="text" name="Username" placeholder="Username">
+	    <h2>Password</h2>
+	    <input type="text" name="Password" placeholder="Password"><br><br><br>
+	    <button type="submit" class="browse" >Login</button>
+    </form>
+
     <a class="browse" href="#">Register</a>
   {% endblock %}
 </body>

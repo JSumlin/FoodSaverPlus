@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, CHAR, Identity, MetaData, CheckConstraint, \
     select, DateTime, Float, Boolean, Date
 from sqlalchemy.orm import sessionmaker, Query, declarative_base
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask
 
 # Uses SQLAlchemy to create the database and table objects for database management.
@@ -11,6 +12,10 @@ Base = declarative_base()
 
 
 class Store(Base):
+    @property
+    def password(self):
+        return self._password
+
     __tablename__ = "stores"
     store_id = Column("store_id", Integer, Identity(start=0, cycle=True), primary_key=True, nullable=False)
     username = Column("username", String, unique=True, nullable=False)
@@ -34,9 +39,13 @@ class Store(Base):
 
     @staticmethod
     def add(session, username, password, store_name, street, city, state, country, zip):
-        new_store = Store(username, password, store_name, street, city, state, country, zip)
+        new_store = Store(username, generate_password_hash(password, method="sha256"), store_name, street, city, state,
+                          country, zip)
         session.add(new_store)
         session.commit()
+
+    def verify_password(self, password):
+        return check_password_hash(self.password, password)
 
     def __init__(self, username, password, store_name, street, city, state, country, zip):
         self.username = username

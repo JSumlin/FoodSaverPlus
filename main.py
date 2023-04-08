@@ -1,5 +1,6 @@
 import sqlite3
 from flask import Flask, render_template, request, url_for, flash, redirect
+from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, CHAR
@@ -21,7 +22,7 @@ app.config["SECRET_KEY"] = str(os.urandom(24).hex())
 engine = create_engine("sqlite:///foodsaverplus.db", echo=True)
 Session = sessionmaker(bind=engine)
 session = Session()
-
+print(session.query(Store).all())
 
 @app.route('/')
 def index():
@@ -63,18 +64,29 @@ def post_conf():
     return render_template('PostConfirmation.html')
 
 
-@app.route('/login')
+@app.route('/login', methods=('GET', 'POST'))
 def login():
+    if request.method == 'POST':
+        if Checks.valid_login(session, request.form["Username"], request.form["Password"]):
+            return render_template('login.html')
     return render_template('login.html')
 
 
 @app.route('/store-signup', methods=('GET', 'POST'))
 def store_signup():
     if request.method == 'POST':
-        if Checks.valid_signup(session, request.form["username"],request.form["password"], request.form["store-name"],
-                               request.form["street-address"], request.form["city"], request.form["state"],
+        if request.form["password"] != request.form["confirm-password"]:
+            flash("Passwords do not match.")
+            return render_template('/storesignup.html')
+        if not Checks.valid_username(session, request.form["username"]):
+            flash("Username already exists.")
+            return render_template('/storesignup.html')
+        if not Checks.valid_address(session,request.form["street-address"], request.form["city"], request.form["state"],
                                request.form["country"], request.form["zip-code"]):
-            Store.add(session, request.form["username"],request.form["password"], request.form["store-name"],
+            flash("An account already exists using this address.")
+            return render_template('/storesignup.html')
+        if request.form["password"] is not None and request.form["store-name"] is not None:
+            Store.add(session, request.form["username"], request.form["password"], request.form["store-name"],
                                request.form["street-address"], request.form["city"], request.form["state"],
                                request.form["country"], request.form["zip-code"])
             # flash("Sign up successful.")
