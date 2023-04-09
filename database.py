@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, CHAR, Identity, MetaData, CheckConstraint, \
     select, DateTime, Float, Boolean, Date
@@ -73,6 +73,11 @@ class Item(Base):
     ing_id = Column("ing_id", Integer, ForeignKey("ingredients.ing_id"))
     store_id = Column("store_id", Integer, ForeignKey("stores.store_id"), nullable=False)
 
+    @staticmethod
+    def add(session, item_name, item_desc, item_img, ing_id, store_id):
+        session.add(Item(item_name, item_desc, item_img, ing_id, store_id))
+        session.commit()
+
     def __init__(self, item_name, item_desc, item_img, ing_id, store_id):
         self.item_name = item_name
         self.item_desc = item_desc
@@ -135,6 +140,12 @@ class UserPost(Base):
     active = Column("active", Boolean, nullable=False)
 
     @staticmethod
+    def add_post(session, item_id, post_quantity, price, exp_date):
+        post = UserPost(item_id, post_quantity, datetime.strptime(exp_date, '%Y-%m-%d'), price, datetime.utcnow(), True)
+        session.add(post)
+        session.commit()
+
+    @staticmethod
     def set_price(session, post_id, price):
         post = session.query(UserPost).filter_by(post_id=post_id).first()
         post.price = price
@@ -158,16 +169,17 @@ class UserPost(Base):
         post.exp_date = exp_date
         session.commit()
 
-    def __int__(self, item_id, post_quantity, exp_date, post_timestamp, status):
+    def __init__(self, item_id, post_quantity, exp_date, price, post_timestamp, active):
         self.item_id = item_id
         self.post_quantity = post_quantity
         self. exp_date = exp_date
+        self.price = price
         self.post_timestamp = post_timestamp
-        self.status = status
+        self.active = active
 
     def __repr__(self):
         return f"({self.post_id}, {self.item_id}, {self.post_quantity}, {self.exp_date}, {self.post_timestamp}, " \
-               f"{self.status})"
+               f"{self.active})"
 
 
 class Reservation(Base):

@@ -24,6 +24,12 @@ login_manager = LoginManager()
 login_manager.login_view = "login"
 login_manager.init_app(app)
 
+# item = Item("spaghetti", "description", "abfiwbs", None, 1)
+# session.add(item)
+# session.commit()
+
+print(session.query(UserPost).all())
+
 
 @login_manager.user_loader
 def load_user(store_id):
@@ -60,10 +66,31 @@ def rsvp_conf():
     return render_template('RsvpConfirmation.html')
 
 
-@app.route('/add-item')
+@app.route('/add-item', methods=('GET', 'POST'))
 @login_required
 def add_item():
+    if request.method == 'POST':
+        Item.add(session, request.form['item_name'], request.form["item_desc"], str(os.urandom(8).hex()), None,
+                 current_user.store_id)
+        return redirect(url_for('index'))
     return render_template('add-item.html')
+
+
+@app.route('/post-new')
+@login_required
+def post_new():
+    return render_template('post-new.html')
+
+
+@app.route('/post-item', methods=('GET', 'POST'))
+@login_required
+def post_item():
+    items = session.query(Item).filter_by(store_id=current_user.store_id).all()
+    if request.method == 'POST':
+        UserPost.add_post(session, request.form["item"], request.form["quantity"], request.form["price"],
+                          request.form["exp_date"])
+        return redirect(url_for('post_conf'))
+    return render_template('post-item.html', items=items)
 
 
 @app.route('/post-confirmation')
@@ -102,6 +129,7 @@ def store_signup():
             Store.add(session, request.form["username"], request.form["password"], request.form["store-name"],
                                request.form["street-address"], request.form["city"], request.form["state"],
                                request.form["country"], request.form["zip-code"])
+            return redirect(url_for('login'))
             # flash("Sign up successful.")
             # redirect("/")
     return render_template('/storesignup.html')

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Post New Item{%endblock%}</title>
+    {% block head %}
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css')}}">
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/add-item-style.css')}}">
+    {%endblock%}
+</head>
+<body>
+  {% block content %}
+    <div style="padding: 10px 20px;">
+      <h1>Post New Item For Sale</h1>
+      <button class="upload-image">Upload image</button>
+      <div>
+        <label>Name:</label>
+        <input type="text" placeholder="Product Name" class="name">
+        <label>Expires:</label>
+        <input type="date">
+      </div>
+      <div><label>Description:</label></div>
+      <div><textarea placeholder="Description" class="desc"></textarea></div>
+      <div>
+        <label>Quantity:</label>
+        <input type="number" value="1" min="1" name="quantity" class="quantity">
+        <label>Size:</label>
+        <input type="number" value="1" min="1" name="size-value" class="size-value">
+        <select name="size-unit" class="size-unit">
+            <option value=""></option>
+            <option value="lb">lb</option>
+            <option value="oz">oz</option>
+            <option value="g">g</option>
+            <option value="kg">kg</option>
+        </select>
+      </div>
+      <div>
+          <button name="cancel" class="cancel">Cancel</button>
+          <button name="submit" class="submit">Submit</button>
+      </div>
+    </div>
+  {%endblock%}
+</body>
+</html>
