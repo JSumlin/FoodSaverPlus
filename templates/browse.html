@@ -22,8 +22,15 @@
         <h1>Browse</h1>
         <div><input type="text" name="search" placeholder="Search"><a class="fndstr" href="#">Find Store</a></div>
         <ul class="browse-listings">
-            <li><a href="#"><img class="list-img" src="static/Images/kroger ground beef.png"><br>Kroger Ground Beef<br>Expires 3/10<br>$1.00</a></li>
-            <li><a href="#"><img class="list-img" src="static/Images/priv sel bread.png"><br>Private Selection Bread<br>Expires 3/10<br>$1.00</a></li>
+            {% for post, item, minDate in posts %}
+                <li class="listings">
+                    <a href="#"><img class="list-img" src="{{ item.item_img }}">
+                        <br>{{ item.item_name }}
+                        <br>Expires {{ post.exp_date.strftime('%b %d') }}
+                        <br>${{ post.price }}
+                    </a>
+                </li>
+            {%endfor%}
         </ul>
     </div>
     {%endblock%}

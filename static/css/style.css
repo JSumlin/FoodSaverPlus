@@ -9,6 +9,7 @@
 
 body {
     background-color: #54626f;
+    margin-top: 60px;
 }
 
 li, a, button {
@@ -19,6 +20,8 @@ li, a, button {
 }
 
 .page-head {
+    position: fixed;
+    top: 0;
     width: 100%;
     height: 60px;
     background-color: #17182B;

@@ -32,76 +32,12 @@
         <a class="fndstr" href="#">Find Store</a>
       </div>
       <ul class="browse-listings">
-        <li>
-          <a href="#"><img class="list-img" src="Images/fettucine.png">
-            <br>Fettuccine Alfredo
-          </a>
-        </li>
-        <li>
-          <a href="#"><img class="list-img" src="Images/Spaghetti-meal.png">
-            <br>Spaghetti
-          </a>
-        </li>
-        <li>
-          <a href="#"><img class="list-img" src="Images/Spaghetti-meal.png">
-            <br>Spaghetti
-          </a>
-        </li>
-        <li>
-          <a href="#"><img class="list-img" src="Images/Spaghetti-meal.png">
-            <br>Spaghetti
-          </a>
-        </li>
-        <li>
-          <a href="#"><img class="list-img" src="Images/Spaghetti-meal.png">
-            <br>Spaghetti
-          </a>
-        </li>
-        <li>
-          <a href="#"><img class="list-img" src="Images/Spaghetti-meal.png">
-            <br>Spaghetti
-          </a>
-        </li>
-        <li>
-          <a href="#"><img class="list-img" src="Images/Spaghetti-meal.png">
-            <br>Spaghetti
-          </a>
-        </li>
-        <li>
-          <a href="#"><img class="list-img" src="Images/Spaghetti-meal.png">
-            <br>Spaghetti
-          </a>
-        </li>
-        <li>
-          <a href="#"><img class="list-img" src="Images/Spaghetti-meal.png">
-            <br>Spaghetti
-          </a>
-        </li>
-        <li>
-          <a href="#"><img class="list-img" src="Images/Spaghetti-meal.png">
-            <br>Spaghetti
-          </a>
-        </li>
-        <li>
-          <a href="#"><img class="list-img" src="Images/Spaghetti-meal.png">
-            <br>Spaghetti
-          </a>
-        </li>
-        <li>
-          <a href="#"><img class="list-img" src="Images/Spaghetti-meal.png">
-            <br>Spaghetti
-          </a>
-        </li>
-        <li>
-          <a href="#"><img class="list-img" src="Images/Spaghetti-meal.png">
-            <br>Spaghetti
-          </a>
-        </li>
-        <li>
-          <a href="#"><img class="list-img" src="Images/Spaghetti-meal.png">
-            <br>Spaghetti
-          </a>
-        </li>
+        {% for meal in meals %}
+          <li>
+            <a href="#"><img class="list-img" src="{{ meal.meal_img }}"></a>
+            <div><a href="/browse" class="list_name">{{ meal.meal_name }}</a></div>
+          </li>
+        {%endfor%}
       </ul>
     </div>
   {%endblock%}

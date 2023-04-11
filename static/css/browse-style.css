@@ -1,12 +1,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700;900&display=swap');
 
 .sidebar {
     position: fixed;
     left: 0;
     height: 100%;
     width: 200px;
-    background-color: #B8B8B8;
+    background-color: #17182B;
+    color: white;
     display: flex;
+}
+
+.listings{
+    background-color: rgba(255,255,255,0.4);
+    border-radius: 3px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: black;
+    transition: 0.3s ease 0s
+}
+
+.listings:hover {
+    background-color: rgba(255,255,255,0.6);
 }
 input[class=priceinput]{
     width: 50px;
@@ -19,7 +34,6 @@ input[class=dateinput]{
     margin-right: 10px;
 }
 .sidebar header {
-    background-color: #B8B8B8;
     display: block;
     color: black;
     font-size: 22px;
@@ -30,6 +44,7 @@ input[class=dateinput]{
 }
 
 .filter-title{
+    color: white;
     font-size: 26px;
     text-align: center;
 }
@@ -51,6 +66,8 @@ input[class=dateinput]{
 .browse-listings li {
     display: inline-grid;
     padding: 30px 30px;
+    margin-top: 10px;
+    margin-right: 10px;
 }
 
 .list-img {
@@ -59,14 +76,23 @@ input[class=dateinput]{
 }
 
 .browse-body {
-    position: fixed;
+    font-family: 'Kanit', sans-serif;
+    font-weight: 300;
     left: 0;
     height: 100%;
-    width: 100%;
+    width: calc(100% - 200px);
     margin: 10px 200px;
     padding: 20px 20px;
     justify-content: space-between;
     align-items: center;
+    color: white;
+}
+
+h1 {
+    text-shadow: -1px 1px 2px #000,
+				  1px 1px 2px #000,
+				  1px -1px 0 #000,
+				  -1px -1px 0 #000;
 }
 
 .fndstr {
@@ -79,4 +105,5 @@ input[class=dateinput]{
     border-radius: 10px;
     cursor: pointer;
     transition: all 0.3s ease 0s;
+    margin-below: 10px;
 }

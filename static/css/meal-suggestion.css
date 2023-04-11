@@ -2,10 +2,11 @@
 
 .sidebar {
     position: fixed;
+    color: white;
     left: 0;
-    height: 100%;
+    height: calc(100% + 50px);
     width: 200px;
-    background-color: #B8B8B8;
+    background-color: #17182B;
     display: flex;
 }
 input[class=priceinput]{
@@ -19,7 +20,6 @@ input[class=dateinput]{
     margin-right: 10px;
 }
 .sidebar header {
-    background-color: #B8B8B8;
     display: block;
     color: black;
     font-size: 22px;
@@ -59,11 +59,14 @@ input[class=dateinput]{
     border-radius: 4px;
 }
 
+.list-name {
+    color: white;
+}
+
 .browse-body {
-    position: fixed;
     left: 0;
     height: 100%;
-    width: 100%;
+    width: calc(100% - 200px);
     margin: 10px 200px;
     padding: 20px 20px;
     justify-content: space-between;

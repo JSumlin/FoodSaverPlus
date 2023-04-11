@@ -4,12 +4,13 @@ from flask_login import login_required, current_user, LoginManager, login_user, 
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, CHAR
+from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, CHAR, func
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, join
 import os
 from database import *
 from dbManager import Checks
+from datetime import date, datetime
 
 # For SQLAlchemy to interact with SQLite
 engine = create_engine("sqlite:///foodsaverplus.db", echo=True)
@@ -24,12 +25,6 @@ login_manager = LoginManager()
 login_manager.login_view = "login"
 login_manager.init_app(app)
 
-# item = Item("spaghetti", "description", "abfiwbs", None, 1)
-# session.add(item)
-# session.commit()
-
-print(session.query(UserPost).all())
-
 
 @login_manager.user_loader
 def load_user(store_id):
@@ -43,12 +38,15 @@ def index():
 
 @app.route('/browse')
 def browse():
-    return render_template('browse.html')
+    posts = session.query(UserPost, Item, func.min(UserPost.exp_date)).join(Item).filter(UserPost.item_id == Item.item_id)\
+    .group_by(UserPost.item_id, UserPost.price).all()
+    return render_template('browse.html', posts=posts)
 
 
 @app.route('/meals')
 def meals():
-    return render_template('meal-suggestion.html')
+    meals = session.query(Meal).all()
+    return render_template('meal-suggestion.html', meals=meals)
 
 
 @app.route('/find-store')
@@ -106,7 +104,7 @@ def login():
         store = session.query(Store).filter_by(username=request.form["Username"]).first()
         if Checks.valid_login(session, request.form["Username"], request.form["Password"]):
             login_user(store, remember=True)
-            return redirect(url_for('index'))
+            # return redirect(url_for('index'))
     return render_template('login.html')
 
 
