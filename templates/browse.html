@@ -8,6 +8,9 @@
     {%endblock%}
 </head>
 <body>
+  {% block home %}
+    <a href="/"><img class="logo" src="../static/Images/home-logo.png" alt="Home"></a>
+  {%endblock%}
     {% block content %}
     <div class="sidebar">
         <ul>
@@ -22,7 +25,7 @@
         <h1>Browse</h1>
         <div><input type="text" name="search" placeholder="Search"><a class="fndstr" href="#">Find Store</a></div>
         <ul class="browse-listings">
-            {% for post, item, minDate in posts %}
+            {% for post, item, recipe, minDate in posts %}
                 <li class="listings">
                     <a href="#"><img class="list-img" src="{{ item.item_img }}">
                         <br>{{ item.item_name }}

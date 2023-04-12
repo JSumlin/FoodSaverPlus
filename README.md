@@ -14,13 +14,11 @@ Python, Flask, SQLite, SQLAlchemy, HTML/CSS.
 
 TO-DO:
 
-4). Fill out meals/ingredients databases. (High priority)
+4). Fill out meals/ingredients databases. (Medium priority)
 
 6). Implement reservation functionality. Reservations should reserve items with the soonest expiration date first. (High priority)
 
 7). Fix design problems for html pages (Low priority)
-
-8). Implement meal suggestion functionality (High priority)
 
 9). Implement Google Maps API functionality (Medium priority)
 
@@ -42,3 +40,5 @@ redirect users who are logged in to the home page. Logging out redirects you to 
 5). Postings and meals are accurately represented from the database on their respective pages. The earliest expiration date
 for an item at a given price point is shown. If the same item is posted at different prices, they will be listed
 separately.
+
+8). Meal suggestion page is function (excluding filters).

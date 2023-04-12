@@ -9,7 +9,7 @@
 </head>
 <body>
   {% block content %}
-    <div><a class="bck" href="/browse">Back to Browse</a></div>
+    <div><a class="bck" href=" {{ url_for('browse', meal_id=0) }}">Back to Browse</a></div>
     <div class="top">
       <div>
         <img class="itmimg" src="..\static\Images\kroger ground beef.png" alt="Kroger Ground Beef">

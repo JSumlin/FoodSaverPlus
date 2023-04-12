@@ -11,7 +11,7 @@
 <body>
     {% block content %}
       <h1>Welcome to Food Saver</h1>
-      <a class="browse" href="/browse">Browse</a>
+      <a class="browse" href="{{ url_for('browse', meal_id=0) }}">Browse</a>
       <a class="browse" href="/store-signup">Store Signup</a>
       <a class="browse" href="/find-store">Find A Store</a><br><br><br>
       <a class="browse" href="/add-item">Add Item For Sale</a>

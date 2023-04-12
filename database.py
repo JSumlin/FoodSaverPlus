@@ -121,7 +121,7 @@ class Recipe(Base):
     meal_id = Column("meal_id", Integer, ForeignKey("meals.meal_id"), nullable=False)
     ing_id = Column("ing_id", Integer, ForeignKey("ingredients.ing_id"), nullable=False)
 
-    def __int__(self, meal_id, ing_id):
+    def __init__(self, meal_id, ing_id):
         self.meal_id = meal_id
         self.ing_id = ing_id
 

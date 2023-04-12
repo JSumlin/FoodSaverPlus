@@ -19,9 +19,11 @@
         <div><label>Description:</label></div>
         <div><textarea placeholder="Description" class="desc" name="item_desc"></textarea></div>
         <div>
-          <input list="ingredient">
+          <input name="ingredient" list="ingredient">
           <datalist id="ingredient">
-            <option value="Standin">
+            {% for ingredient in ingredients %}
+              <option value="{{ ingredient.ing_name }}">
+            {%endfor%}
           </datalist>
         </div>
         <div>

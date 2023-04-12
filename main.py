@@ -12,15 +12,20 @@ from database import *
 from dbManager import Checks
 from datetime import date, datetime
 
+
+# NOTE: Need to split this up to different py files in the future for cleanliness and readability. Also need to clean
+#       imports when the project is in a stable place.
+
+
 # For SQLAlchemy to interact with SQLite
 engine = create_engine("sqlite:///foodsaverplus.db", echo=True)
 Session = sessionmaker(bind=engine)
 session = Session()
 
-# main = Blueprint("main", __name__)
 app = Flask(__name__)
 app.config["SECRET_KEY"] = str(os.urandom(24).hex())
 
+# Login Controls
 login_manager = LoginManager()
 login_manager.login_view = "login"
 login_manager.init_app(app)
@@ -31,15 +36,48 @@ def load_user(store_id):
     return session.query(Store).filter_by(store_id=store_id).first()
 
 
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
+
+@app.route('/login', methods=('GET', 'POST'))
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    if request.method == 'POST':
+        store = session.query(Store).filter_by(username=request.form["Username"]).first()
+        if Checks.valid_login(session, request.form["Username"], request.form["Password"]):
+            login_user(store, remember=True)
+            # return redirect(url_for('index'))
+    return render_template('login.html')
+
+
+# Webpages
 @app.route('/')
 def index():
     return render_template('home.html')
 
 
-@app.route('/browse')
-def browse():
-    posts = session.query(UserPost, Item, func.min(UserPost.exp_date)).join(Item).filter(UserPost.item_id == Item.item_id)\
-    .group_by(UserPost.item_id, UserPost.price).all()
+# A browse page with a meal_id of 0 shows all posted items. Any number above that displays only ingredients for the
+# meal with that meal_id.
+@app.route('/browse/<int:meal_id>')
+def browse(meal_id):
+    if meal_id == 0:
+        # Joins "posts", "items", and "recipes" tables while getting the soonest expiration date for an item posted at
+        # a given price point.
+        posts = session.query(UserPost, Item, Recipe, func.min(UserPost.exp_date)).select_from(UserPost).\
+            join(Item, Item.item_id == UserPost.item_id).join(Recipe, Recipe.ing_id == Item.ing_id)\
+            .filter(UserPost.item_id == Item.item_id, Recipe.ing_id == Item.ing_id)\
+            .group_by(UserPost.item_id, UserPost.price).all()
+    else:
+        # Joins "posts", "items", and "recipes" tables while getting the soonest expiration date for an item posted at
+        # a given price point, and filters that to ingredients of the chosen meal.
+        posts = session.query(UserPost, Item, Recipe, func.min(UserPost.exp_date)).select_from(UserPost)\
+            .join(Item, Item.item_id == UserPost.item_id).join(Recipe, Recipe.ing_id == Item.ing_id)\
+            .filter(Recipe.meal_id == meal_id).group_by(UserPost.item_id, UserPost.price).all()
     return render_template('browse.html', posts=posts)
 
 
@@ -67,11 +105,15 @@ def rsvp_conf():
 @app.route('/add-item', methods=('GET', 'POST'))
 @login_required
 def add_item():
+    ingredients = session.query(Ingredient).all()
     if request.method == 'POST':
-        Item.add(session, request.form['item_name'], request.form["item_desc"], str(os.urandom(8).hex()), None,
+        ing_id = session.query(Ingredient).filter(Ingredient.ing_name == request.form["ingredient"]).first()
+        if ing_id is not None:
+            ing_id = ing_id.ing_id
+        Item.add(session, request.form['item_name'], request.form["item_desc"], str(os.urandom(8).hex()), ing_id,
                  current_user.store_id)
         return redirect(url_for('index'))
-    return render_template('add-item.html')
+    return render_template('add-item.html', ingredients=ingredients)
 
 
 @app.route('/post-new')
@@ -96,40 +138,30 @@ def post_conf():
     return render_template('PostConfirmation.html')
 
 
-@app.route('/login', methods=('GET', 'POST'))
-def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-    if request.method == 'POST':
-        store = session.query(Store).filter_by(username=request.form["Username"]).first()
-        if Checks.valid_login(session, request.form["Username"], request.form["Password"]):
-            login_user(store, remember=True)
-            # return redirect(url_for('index'))
-    return render_template('login.html')
-
-
 @app.route('/store-signup', methods=('GET', 'POST'))
 def store_signup():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
+
     if request.method == 'POST':
         if request.form["password"] != request.form["confirm-password"]:
             flash("Passwords do not match.")
             return render_template('/storesignup.html')
+
         if not Checks.valid_username(session, request.form["username"]):
             flash("Username already exists.")
             return render_template('/storesignup.html')
+
         if not Checks.valid_address(session,request.form["street-address"], request.form["city"], request.form["state"],
-                               request.form["country"], request.form["zip-code"]):
+                                    request.form["country"], request.form["zip-code"]):
             flash("An account already exists using this address.")
             return render_template('/storesignup.html')
+
         if request.form["password"] is not None and request.form["store-name"] is not None:
             Store.add(session, request.form["username"], request.form["password"], request.form["store-name"],
-                               request.form["street-address"], request.form["city"], request.form["state"],
-                               request.form["country"], request.form["zip-code"])
+                      request.form["street-address"], request.form["city"], request.form["state"],
+                      request.form["country"], request.form["zip-code"])
             return redirect(url_for('login'))
-            # flash("Sign up successful.")
-            # redirect("/")
     return render_template('/storesignup.html')
 
 
@@ -137,13 +169,6 @@ def store_signup():
 @login_required
 def profile():
     return render_template('profile.html', name=current_user.username)
-
-
-@app.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('login'))
 
 
 app.run(debug=True)
