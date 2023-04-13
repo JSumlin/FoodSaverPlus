@@ -9,9 +9,7 @@
 </head>
 <body>
 <header class="page-head">
-  {% block home %}
-    <a href="/"><img class="logo" src="static/Images/home-logo.png" alt="Home"></a>
-  {%endblock%}
+  <a href="/"><img class="logo" src="{{ url_for('static', filename='Images/home-logo.png') }}" alt="Home"></a>
   {% if not current_user.is_authenticated %}
     <a class="lgnbut" href="/login">Login</a>
   {% endif %}

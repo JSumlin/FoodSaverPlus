@@ -16,8 +16,6 @@ TO-DO:
 
 4). Fill out meals/ingredients databases. (Medium priority)
 
-6). Implement reservation functionality. Reservations should reserve items with the soonest expiration date first. (High priority)
-
 7). Fix design problems for html pages (Low priority)
 
 9). Implement Google Maps API functionality (Medium priority)
@@ -41,4 +39,6 @@ redirect users who are logged in to the home page. Logging out redirects you to 
 for an item at a given price point is shown. If the same item is posted at different prices, they will be listed
 separately.
 
-8). Meal suggestion page is function (excluding filters).
+8). Meal suggestion page is functional (excluding filters).
+
+6). Reservation functionality is now implemented. (Could be improved by having customers enter their name).

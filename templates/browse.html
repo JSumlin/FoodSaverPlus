@@ -8,9 +8,6 @@
     {%endblock%}
 </head>
 <body>
-  {% block home %}
-    <a href="/"><img class="logo" src="../static/Images/home-logo.png" alt="Home"></a>
-  {%endblock%}
     {% block content %}
     <div class="sidebar">
         <ul>
@@ -27,7 +24,8 @@
         <ul class="browse-listings">
             {% for post, item, recipe, minDate in posts %}
                 <li class="listings">
-                    <a href="#"><img class="list-img" src="{{ item.item_img }}">
+                    <a href="{{ url_for('view_item', meal_id=meal_id, post_id=post.post_id) }}">
+                      <img class="list-img" src="{{ url_for('static', filename=item.item_img) }}">
                         <br>{{ item.item_name }}
                         <br>Expires {{ post.exp_date.strftime('%b %d') }}
                         <br>${{ post.price }}

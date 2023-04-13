@@ -9,24 +9,25 @@
 </head>
 <body>
   {% block content %}
-    <div><a class="bck" href=" {{ url_for('browse', meal_id=0) }}">Back to Browse</a></div>
+    <div><a class="bck" href=" {{ url_for('browse', meal_id=meal_id) }}">Back to Browse</a></div>
     <div class="top">
       <div>
-        <img class="itmimg" src="..\static\Images\kroger ground beef.png" alt="Kroger Ground Beef">
+        <img class="itmimg" src="{{ url_for('static', filename=item.item_img) }}" alt=" {{ item.item_name }}">
       </div>
       <div class="rsrv-pnl">
-        <label class="qlabel">Quantity:</label>
-        <input type="number" class="quantity" name="quantity" value="1" min="1">
-        <a class="rsrv" href="#">Reserve</a>
+        <form method="post">
+          <label class="qlabel">Quantity:</label>
+          <input type="number" class="quantity" name="quantity" value="1" min="1" max="{{ max }}">
+          <button type="submit" class="rsrv">Reserve</button>
+        </form>
       </div>
     </div>
     <div class="btm">
-      <div><Label class="name">Kroger Ground Beef</Label></div>
-      <div><Label class="exp">Expires 3/10</Label></div>
-      <div><Label class="price">$1.00</Label></div>
+      <div><Label class="name">{{ item.item_name }}</Label></div>
+      <div><Label class="exp">Expires {{ post.exp_date.strftime('%b %d') }}</Label></div>
+      <div><Label class="price">${{ post.price }}</Label></div>
       <div><Label class="desc">Description:</Label></div>
-      <div class="dtext"><p>5lb Kroger brand ground beef</p></div>
+      <div class="dtext"><p>{{ item.item_desc }}</p></div>
     </div>
   {%endblock%}
 </body>
-</html>

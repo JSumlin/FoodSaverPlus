@@ -1,3 +1,4 @@
+import sqlite3
 from datetime import datetime, date
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, CHAR, Identity, MetaData, CheckConstraint, \
@@ -10,7 +11,20 @@ from flask_login import UserMixin
 # Uses SQLAlchemy to create the database and table objects.
 
 Base = declarative_base()
+# engine = create_engine("sqlite:///foodsaverplus.db", echo=True)
+# connection = engine.connect()
+#
+# table_name = 'posts'
+#
+# query = f'ALTER TABLE {table_name} MODIFY ;'
+# connection.execute(query)
 
+# conn = sqlite3.connect('flowershopdatabase.db', check_same_thread=False)
+# conn.execute("PRAGMA foreign_keys = 1")
+# conn.execute("ALTER TABLE posts DROP CONSTRAINT post_quantity>0")
+# conn.execute("ALTER TABLE posts ADD CONSTRAINT post_quantity>=0")
+# cursor = conn.cursor()
+# conn.commit()
 
 class Store(UserMixin, Base):
 
@@ -133,7 +147,7 @@ class UserPost(Base):
     __tablename__ = "posts"
     post_id = Column("post_id", Integer, Identity(start=0, cycle=True), primary_key=True, nullable=False)
     item_id = Column("item_id", Integer, ForeignKey("items.item_id"), nullable=False)
-    post_quantity = Column("post_quantity", Integer, CheckConstraint("post_quantity>0"), nullable=False)
+    post_quantity = Column("post_quantity", Integer, CheckConstraint("post_quantity>=0"), nullable=False)
     price = Column("price", Float, nullable=False)
     exp_date = Column("exp_date", Date, nullable=False)
     post_timestamp = Column("post_timestamp", DateTime, nullable=False)
@@ -141,7 +155,11 @@ class UserPost(Base):
 
     @staticmethod
     def add_post(session, item_id, post_quantity, price, exp_date):
-        post = UserPost(item_id, post_quantity, datetime.strptime(exp_date, '%Y-%m-%d'), price, datetime.utcnow(), True)
+        active = True
+        if post_quantity == 0:
+            active = False
+        post = UserPost(item_id, post_quantity, datetime.strptime(exp_date, '%Y-%m-%d'), price, datetime.utcnow(),
+                        active)
         session.add(post)
         session.commit()
 
@@ -172,14 +190,14 @@ class UserPost(Base):
     def __init__(self, item_id, post_quantity, exp_date, price, post_timestamp, active):
         self.item_id = item_id
         self.post_quantity = post_quantity
-        self. exp_date = exp_date
+        self.exp_date = exp_date
         self.price = price
         self.post_timestamp = post_timestamp
         self.active = active
 
     def __repr__(self):
-        return f"({self.post_id}, {self.item_id}, {self.post_quantity}, {self.exp_date}, {self.post_timestamp}, " \
-               f"{self.active})"
+        return f"({self.post_id}, {self.item_id}, {self.post_quantity}, {self.price}, {self.exp_date}, " \
+               f"{self.post_timestamp}, {self.active})"
 
 
 class Reservation(Base):
@@ -189,10 +207,10 @@ class Reservation(Base):
     rsvp_quantity = Column("rsvp_quantity", Integer, CheckConstraint("rsvp_quantity>0"), nullable=False)
     rsvp_timestamp = Column("rsvp_timestamp", DateTime, nullable=False)
 
-    def __int__(self, post_id, rsvp_quantity, rsvp_timestamp):
+    def __init__(self, post_id, rsvp_quantity):
         self.post_id = post_id
         self.rsvp_quantity = rsvp_quantity
-        self.rsvp_timestamp = rsvp_timestamp
+        self.rsvp_timestamp = datetime.utcnow()
 
     def __repr__(self):
         return f"({self.rsvp_id}, {self.post_id}, {self.rsvp_quantity}, {self.rsvp_timestamp})"

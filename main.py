@@ -4,7 +4,7 @@ from flask_login import login_required, current_user, LoginManager, login_user, 
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, CHAR, func
+from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, CHAR, func, desc
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, join
 import os
@@ -30,7 +30,6 @@ login_manager = LoginManager()
 login_manager.login_view = "login"
 login_manager.init_app(app)
 
-
 @login_manager.user_loader
 def load_user(store_id):
     return session.query(Store).filter_by(store_id=store_id).first()
@@ -55,6 +54,22 @@ def login():
     return render_template('login.html')
 
 
+# Calculates the quantity available for "view item" pages.
+def calc_quantity(viewed_posts):
+    quantity = 0
+    for viewed_post, item in viewed_posts:
+        quantity = quantity + viewed_post.post_quantity
+    return quantity
+
+
+# When a user is on a "view item" page, that page is for all posts for that item at the stated price point. This returns
+# all relevant posts to be used in reservation processes.
+def get_viewed_posts(post):
+    return session.query(UserPost, Item).select_from(UserPost). \
+        join(Item, Item.item_id == UserPost.item_id)\
+        .filter(Item.item_id == post.item_id, UserPost.price == post.price, UserPost.active == True)\
+        .order_by(UserPost.exp_date).all()
+
 # Webpages
 @app.route('/')
 def index():
@@ -70,15 +85,15 @@ def browse(meal_id):
         # a given price point.
         posts = session.query(UserPost, Item, Recipe, func.min(UserPost.exp_date)).select_from(UserPost).\
             join(Item, Item.item_id == UserPost.item_id).join(Recipe, Recipe.ing_id == Item.ing_id)\
-            .filter(UserPost.item_id == Item.item_id, Recipe.ing_id == Item.ing_id)\
+            .filter(UserPost.item_id == Item.item_id, Recipe.ing_id == Item.ing_id, UserPost.active == True)\
             .group_by(UserPost.item_id, UserPost.price).all()
     else:
         # Joins "posts", "items", and "recipes" tables while getting the soonest expiration date for an item posted at
         # a given price point, and filters that to ingredients of the chosen meal.
         posts = session.query(UserPost, Item, Recipe, func.min(UserPost.exp_date)).select_from(UserPost)\
             .join(Item, Item.item_id == UserPost.item_id).join(Recipe, Recipe.ing_id == Item.ing_id)\
-            .filter(Recipe.meal_id == meal_id).group_by(UserPost.item_id, UserPost.price).all()
-    return render_template('browse.html', posts=posts)
+            .filter(Recipe.meal_id == meal_id, UserPost.active == True).group_by(UserPost.item_id, UserPost.price).all()
+    return render_template('browse.html', posts=posts, meal_id=meal_id)
 
 
 @app.route('/meals')
@@ -92,9 +107,42 @@ def find_store():
     return render_template('find-store.html')
 
 
-@app.route('/view-item')
-def view_item():
-    return render_template('view-item.html')
+@app.route('/browse/<int:meal_id>/<int:post_id>', methods=('GET', 'POST'))
+def view_item(meal_id, post_id):
+    post = session.query(UserPost).filter_by(post_id=post_id).first()
+    item = session.query(Item).filter_by(item_id=post.item_id).first()
+    viewed_posts = get_viewed_posts(post)
+    max_quantity = int(calc_quantity(viewed_posts))
+
+    if request.method == 'POST':
+        rsvp_quantity = int(request.form['quantity'])
+
+        if rsvp_quantity > max_quantity or rsvp_quantity < 1:
+            flash(f"The quantity requested exceeds the amount available. You may only reserve {max_quantity} at this "
+                  f"time.")
+            return render_template('view-item.html', post=post, item=item, meal_id=meal_id, max=max_quantity)
+
+        # Atomic transaction subtracting the appropriate quantity from the "posts" table and adding it to the
+        # "reservations" table. Also labels posts as inactive if their quantity reaches 0.
+        try:
+            for viewed_post, viewed_item in viewed_posts:
+                if rsvp_quantity >= int(viewed_post.post_quantity):
+                    session.add(Reservation(viewed_post.post_id, viewed_post.post_quantity))
+                    rsvp_quantity = rsvp_quantity - int(viewed_post.post_quantity)
+                    viewed_post.post_quantity = 0
+                    viewed_post.active = False
+                else:
+                    viewed_post.post_quantity = viewed_post.post_quantity - rsvp_quantity
+                    session.add(Reservation(viewed_post.post_id, rsvp_quantity))
+                    rsvp_quantity = 0
+                if rsvp_quantity == 0:
+                    break
+            session.commit()
+            return redirect(url_for('rsvp_conf'))
+        except sqlite3.Error():
+            flash("An error occurred while placing your reservation. Please Try again.")
+
+    return render_template('view-item.html', post=post, item=item, meal_id=meal_id, max=max_quantity)
 
 
 @app.route('/reservation-confirmation')
