@@ -14,11 +14,11 @@
     <form method="post">
       <input type="text" name="Username" placeholder="Username">
 	    <h2>Password</h2>
-	    <input type="text" name="Password" placeholder="Password"><br><br><br>
+	    <input type="password" name="Password" placeholder="Password"><br><br><br>
 	    <button type="submit" class="browse" >Login</button>
     </form>
 
-    <a class="browse" href="#">Register</a>
+    <a class="browse" href="{{ url_for('store_signup') }}">Register</a>
   {% endblock %}
 </body>
 </html>

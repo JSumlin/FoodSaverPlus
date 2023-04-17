@@ -5,26 +5,26 @@
   <title>{% block title %}Post Item{% endblock %}</title>
   {% block head %}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/add-item-style.css')}}">
   {%endblock%}
 </head>
 <body>
   {% block content %}
-    <div>
+    <div class="page-body">
       <form method="post">
+        <label>Select item:</label>
         <div>
           <select name="item" id="item">
             {% for item in items %}
             <option value="{{ item['item_id'] }}">{{ item['item_name'] }}</option>
             {%endfor%}
           </select>
-          or
-          <a href="/add-item">Post a new item</a>
+          <label>or</label>
+          <a href="/add-item" class="post-link">Post a new item</a>
         </div>
         <div>
-          <label>Quantity:</label>
-          <input type="number" value="1" min="1" name="quantity" class="quantity">
-          <label>Size:</label>
-          <input type="number" value="1" min="1" name="size-value" class="size-value">
+          <label>Price: $</label>
+        <!--  <input type="number" value="1" min="1" name="size-value" class="size-value">
           <select name="size-unit" class="size-unit">
               <option value=""></option>
               <option value="lb">lb</option>
@@ -32,7 +32,11 @@
               <option value="g">g</option>
               <option value="kg">kg</option>
           </select>
+          -->
           <input type="number" placeholder="Price" name="price" step="0.01">
+          <label>Quantity:</label>
+          <input type="number" value="1" min="1" name="quantity" class="quantity">
+          <br>
           <label>Expires:</label>
           <input name="exp_date" type="date">
         </div>

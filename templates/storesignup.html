@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>{% block title %}AStore Signup{%endblock%}</title>
+    <title>{% block title %}Store Signup{%endblock%}</title>
     {% block head %}
       <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css')}}">
       <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/storesignup.css')}}">
@@ -20,6 +20,7 @@
           type="text"
           id="username"
           name="username"
+          value="{{ inputs[0] }}"
           required
           placeholder="Username"
         />
@@ -46,6 +47,7 @@
           type="text"
           id="store-name"
           name="store-name"
+          value="{{ inputs[1] }}"
           required
           placeholder="Store name"
         />
@@ -55,6 +57,7 @@
           type="text"
           id="street-address"
           name="street-address"
+          value="{{ inputs[2] }}"
           required
           placeholder="Street address"
         />
@@ -65,6 +68,7 @@
             type="text"
             id="city"
             name="city"
+            value="{{ inputs[3] }}"
             required
             placeholder="City"
           />
@@ -72,6 +76,7 @@
             type="text"
             id="state"
             name="state"
+            value="{{ inputs[4] }}"
             required
             placeholder="State"
           />
@@ -79,6 +84,7 @@
             type="text"
             id="country"
             name="country"
+            value="{{ inputs[5] }}"
             required
             placeholder="Country"
           />
@@ -90,6 +96,7 @@
           type="text"
           id="zip-code"
           name="zip-code"
+          value="{{ inputs[6] }}"
           required
           placeholder="Zip code"
         />

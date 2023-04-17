@@ -14,17 +14,13 @@ Python, Flask, SQLite, SQLAlchemy, HTML/CSS.
 
 TO-DO:
 
-4). Fill out meals/ingredients databases. (Medium priority)
-
-7). Fix design problems for html pages (Low priority)
-
-9). Implement Google Maps API functionality (Medium priority)
+9). Implement TomTom API functionality (Medium priority)
 
 10). Implement Browse filters (Low priority)
 
-12). Implement ability for users to upload images for their items. (Medium Priority)
-
 13). Clean up, comment, and refactor code. (Low priority for now. Functionality is most important at the moment.)
+
+14). Have customers enter a name when reserving items. (Low priority)
 
 COMPLETED:
 
@@ -42,3 +38,7 @@ separately.
 8). Meal suggestion page is functional (excluding filters).
 
 6). Reservation functionality is now implemented. (Could be improved by having customers enter their name).
+
+12). Users can now upload images for their items.
+
+7). Web page designs fixed. Could use aesthetic improvement, but they are functional.

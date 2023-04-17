@@ -10,27 +10,31 @@
 </head>
 <body>
   {% block content %}
-    <form method="post">
-      <button class="upload-image">Upload image</button>
-        <div>
-          <label>Name:</label>
-          <input type="text" name="item_name" placeholder="Product Name" class="name">
-        </div>
-        <div><label>Description:</label></div>
-        <div><textarea placeholder="Description" class="desc" name="item_desc"></textarea></div>
-        <div>
-          <input name="ingredient" list="ingredient">
-          <datalist id="ingredient">
-            {% for ingredient in ingredients %}
-              <option value="{{ ingredient.ing_name }}">
-            {%endfor%}
-          </datalist>
-        </div>
-        <div>
-            <button name="cancel" class="cancel">Cancel</button>
-            <button type="submit" name="submit" class="submit">Submit</button>
-        </div>
-      </form>
+  <div class="page-body">
+    <form method="post" enctype="multipart/form-data">
+      <!-- <button class="upload-image">Upload image</button> -->
+      <input type="file" name="image" accept="image/*" class="img-input" required>
+      <div>
+        <label for="name">Name:</label>
+        <input type="text" name="item_name" placeholder="Product Name" class="name" id="name" required>
+      </div>
+      <div><label for="item_desc">Description:</label></div>
+      <div><textarea placeholder="Description" class="desc" name="item_desc" id="item_desc"></textarea></div>
+      <div>
+        <label for="ingredient">Ingredient:</label>
+        <input name="ingredient" list="ingredient">
+        <datalist id="ingredient">
+          {% for ingredient in ingredients %}
+            <option value="{{ ingredient.ing_name }}">
+          {%endfor%}
+        </datalist>
+      </div>
+      <div>
+          <button name="cancel" class="cancel">Cancel</button>
+          <button type="submit" name="submit" class="submit">Submit</button>
+      </div>
+    </form>
+  </div>
   {%endblock%}
 </body>
 </html>

@@ -1,13 +1,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700;900&display=swap');
 
-
+.page-body {
+    padding: 10px;
+    color: white;
+}
 h1, label {
     font-family: 'Kanit', sans-serif;
+    text-shadow: -1px 1px 2px #000,
+				  1px 1px 2px #000,
+				  1px -1px 0 #000,
+				  -1px -1px 0 #000;
+}
+.img-input {
+    margin-bottom: 5px;
 }
 .desc {
     height: 200px;
-    width: 400px;
+    width: 630px;
     resize: none;
     padding: 4px 4px;
 }
@@ -41,6 +51,17 @@ text, input, select {
 .name {
     width: 400px;
 }
-.desc {
-    width: 630px;
+
+.post-link {
+    margin: 0 5px;
+    padding: 2px 10px;
+    background-color: rgba(136,244,134,1);
+    color: black;
+    border: solid;
+    border-width: 1px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease 0s;
+    margin-below: 10px;
+    color: black;
 }

@@ -40,14 +40,15 @@
 .itmimg {
     position: absolute;
     left: 5%;
-    width: 40%;
+    max-width: 40%;
+    max-height: 100%;
 }
 
 .rsrv {
     font-family: 'Kanit', sans-serif;
     font-weight:700;
     font-size: 40px;
-    line-height: 40px;
+    line-height: 30px;
     color: white;
     background-color: #00BD13;
     position: absolute;
@@ -65,6 +66,7 @@
     width: 82%;
     right: 9%;
     bottom: 17px;
+    cursor: pointer;
 }
 
 .qlabel {

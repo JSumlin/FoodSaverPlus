@@ -20,13 +20,14 @@
     </div>
     <div class="browse-body">
         <h1>Browse</h1>
-        <div><input type="text" name="search" placeholder="Search"><a class="fndstr" href="#">Find Store</a></div>
+        <div><input type="text" name="search" placeholder="Search" class="search"><a class="fndstr" href="#">Find Store</a></div>
         <ul class="browse-listings">
-            {% for post, item, recipe, minDate in posts %}
+            {% for post, item, recipe, store, minDate in posts %}
                 <li class="listings">
                     <a href="{{ url_for('view_item', meal_id=meal_id, post_id=post.post_id) }}">
                       <img class="list-img" src="{{ url_for('static', filename=item.item_img) }}">
                         <br>{{ item.item_name }}
+                        <br>{{ store.store_name }}
                         <br>Expires {{ post.exp_date.strftime('%b %d') }}
                         <br>${{ post.price }}
                     </a>

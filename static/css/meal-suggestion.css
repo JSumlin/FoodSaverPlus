@@ -9,6 +9,20 @@
     background-color: #17182B;
     display: flex;
 }
+.listings{
+    background-color: rgba(255,255,255,0.4);
+    border-radius: 3px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: black;
+    transition: 0.3s ease 0s
+}
+.listings:hover {
+    background-color: rgba(255,255,255,0.6);
+}
+.search, .ingredient {
+    margin-bottom: 20px;
+}
 input[class=priceinput]{
     width: 50px;
     height: 20px;

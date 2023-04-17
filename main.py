@@ -11,6 +11,8 @@ import os
 from database import *
 from dbManager import Checks
 from datetime import date, datetime
+from werkzeug.utils import secure_filename
+import uuid as uuid
 
 
 # NOTE: Need to split this up to different py files in the future for cleanliness and readability. Also need to clean
@@ -24,6 +26,9 @@ session = Session()
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = str(os.urandom(24).hex())
+
+UPLOAD_FOLDER = 'static'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Login Controls
 login_manager = LoginManager()
@@ -50,7 +55,7 @@ def login():
         store = session.query(Store).filter_by(username=request.form["Username"]).first()
         if Checks.valid_login(session, request.form["Username"], request.form["Password"]):
             login_user(store, remember=True)
-            # return redirect(url_for('index'))
+            return redirect(url_for('index'))
     return render_template('login.html')
 
 
@@ -80,19 +85,28 @@ def index():
 # meal with that meal_id.
 @app.route('/browse/<int:meal_id>')
 def browse(meal_id):
+    current_date = date.today()
+    posts = session.query(UserPost).filter(UserPost.active == True).order_by(UserPost.exp_date).all()
+    for post in posts:
+        if post.exp_date < current_date:
+            post.active = False
+        elif post.exp_date > current_date:
+            break
+    session.commit()
     if meal_id == 0:
-        # Joins "posts", "items", and "recipes" tables while getting the soonest expiration date for an item posted at
-        # a given price point.
-        posts = session.query(UserPost, Item, Recipe, func.min(UserPost.exp_date)).select_from(UserPost).\
+        # Joins "posts", "items", "recipes", and "stores" tables while getting the soonest expiration date for an item
+        # posted at a given price point.
+        posts = session.query(UserPost, Item, Recipe, Store, func.min(UserPost.exp_date)).select_from(UserPost).\
             join(Item, Item.item_id == UserPost.item_id).join(Recipe, Recipe.ing_id == Item.ing_id)\
-            .filter(UserPost.item_id == Item.item_id, Recipe.ing_id == Item.ing_id, UserPost.active == True)\
+            .join(Store, Store.store_id == Item.store_id).filter(UserPost.active == True)\
             .group_by(UserPost.item_id, UserPost.price).all()
     else:
-        # Joins "posts", "items", and "recipes" tables while getting the soonest expiration date for an item posted at
-        # a given price point, and filters that to ingredients of the chosen meal.
-        posts = session.query(UserPost, Item, Recipe, func.min(UserPost.exp_date)).select_from(UserPost)\
+        # Joins "posts", "items", "recipes", and "stores" tables while getting the soonest expiration date for an item
+        # posted at a given price point, and filters that to ingredients of the chosen meal.
+        posts = session.query(UserPost, Item, Recipe, Store, func.min(UserPost.exp_date)).select_from(UserPost)\
             .join(Item, Item.item_id == UserPost.item_id).join(Recipe, Recipe.ing_id == Item.ing_id)\
-            .filter(Recipe.meal_id == meal_id, UserPost.active == True).group_by(UserPost.item_id, UserPost.price).all()
+            .join(Store, Store.store_id == Item.store_id).filter(Recipe.meal_id == meal_id, UserPost.active == True)\
+            .group_by(UserPost.item_id, UserPost.price).all()
     return render_template('browse.html', posts=posts, meal_id=meal_id)
 
 
@@ -155,10 +169,13 @@ def rsvp_conf():
 def add_item():
     ingredients = session.query(Ingredient).all()
     if request.method == 'POST':
+        img_name = secure_filename(request.files['image'].filename)
+        img_name = 'Images/' + str(uuid.uuid1()) + "_" + img_name
+        request.files['image'].save(os.path.join(app.config['UPLOAD_FOLDER'], img_name))
         ing_id = session.query(Ingredient).filter(Ingredient.ing_name == request.form["ingredient"]).first()
         if ing_id is not None:
             ing_id = ing_id.ing_id
-        Item.add(session, request.form['item_name'], request.form["item_desc"], str(os.urandom(8).hex()), ing_id,
+        Item.add(session, request.form['item_name'], request.form["item_desc"], img_name, ing_id,
                  current_user.store_id)
         return redirect(url_for('index'))
     return render_template('add-item.html', ingredients=ingredients)
@@ -190,27 +207,30 @@ def post_conf():
 def store_signup():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
-
+    inputs = ["", "", "", "", "", "", ""]
     if request.method == 'POST':
+        inputs = [request.form["username"], request.form["store-name"],
+                  request.form["street-address"], request.form["city"], request.form["state"],
+                  request.form["country"], request.form["zip-code"]]
         if request.form["password"] != request.form["confirm-password"]:
             flash("Passwords do not match.")
-            return render_template('/storesignup.html')
+            return render_template('/storesignup.html', inputs=inputs)
 
         if not Checks.valid_username(session, request.form["username"]):
             flash("Username already exists.")
-            return render_template('/storesignup.html')
+            return render_template('/storesignup.html', inputs=inputs)
 
         if not Checks.valid_address(session,request.form["street-address"], request.form["city"], request.form["state"],
                                     request.form["country"], request.form["zip-code"]):
             flash("An account already exists using this address.")
-            return render_template('/storesignup.html')
+            return render_template('/storesignup.html', inputs=inputs)
 
         if request.form["password"] is not None and request.form["store-name"] is not None:
             Store.add(session, request.form["username"], request.form["password"], request.form["store-name"],
                       request.form["street-address"], request.form["city"], request.form["state"],
                       request.form["country"], request.form["zip-code"])
             return redirect(url_for('login'))
-    return render_template('/storesignup.html')
+    return render_template('/storesignup.html', inputs=inputs)
 
 
 @app.route('/profile')
@@ -218,5 +238,8 @@ def store_signup():
 def profile():
     return render_template('profile.html', name=current_user.username)
 
-
+# item = session.query(Item).first()
+# item.item_img = 'Images/' + item.item_img
+# session.commit()
+# print(date.today())
 app.run(debug=True)
