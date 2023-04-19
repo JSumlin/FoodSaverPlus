@@ -9,7 +9,7 @@
 </head>
 <body>
   {% block content %}
-    <h3>Your item has been reserved. It is available for pickup at [insert address].</h3>
+    <h3>Your item has been reserved. It is available for pickup at {{ store.street }}, {{ store.city }}, {{ store.state }}.</h3>
   {%endblock%}
 </body>
 </html>

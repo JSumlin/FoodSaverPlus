@@ -10,25 +10,45 @@
 <body>
     {% block content %}
     <div class="sidebar">
+      <form method="post">
         <ul>
-            <li class="filter-title">Filters</li>
-            <li class="filter-text">Price:</li>
+          <li class="filter-title">Choose Your Store:</li>
+          <li><input name="store_filter" list="stores">
+          <datalist id="stores">
+            <option value="0">Any Store</option>
+            {% for store in stores %}
+            <option value="{{ store.store_id }}">{{ store.store_name }} - {{ store.street }}, {{ store.city }}, {{ store.state }}</option>
+            {%endfor%}
+          </datalist></li>
+          <li><button type="submit">Submit</button></li>
+        </ul>
+      </form>
+           <!-- <li class="filter-text">Price:</li>
             <li><input type="number" class="priceinput" name="mininput" placeholder="Min."><input type="number" class="priceinput" name="maxprice" placeholder="Max."></li>
             <li class="filter-text">Expires after:</li>
             <li><input type="number" class="dateinput" name="month" placeholder="Month"><input type="number" class="dateinput" name="day" placeholder="Day"></li>
-        </ul>
+          -->
+
     </div>
     <div class="browse-body">
         <h1>Browse</h1>
-        <div><input type="text" name="search" placeholder="Search" class="search"><a class="fndstr" href="#">Find Store</a></div>
+      <!-- <div><input type="text" name="search" placeholder="Search" class="search"><a class="fndstr" href="#">Find Store</a></div>
+        <input name="search" list="search">
+          {% for post, item, recipe, store, minDate in posts %}
+            <datalist id="search">
+              <option value="{{ item.item_name }}">
+            </datalist>
+          {%endfor%}
+          -->
         <ul class="browse-listings">
             {% for post, item, recipe, store, minDate in posts %}
                 <li class="listings">
-                    <a href="{{ url_for('view_item', meal_id=meal_id, post_id=post.post_id) }}">
+                    <a href="{{ url_for('view_item', meal_id=meal_id, store_id=store_id, post_id=post.post_id) }}">
                       <img class="list-img" src="{{ url_for('static', filename=item.item_img) }}">
                         <br>{{ item.item_name }}
                         <br>{{ store.store_name }}
-                        <br>Expires {{ post.exp_date.strftime('%b %d') }}
+                        <br>{{ store.street }}, {{store.city }}, {{ store.state }}
+                        <br>Sell by {{ post.exp_date.strftime('%b %d') }}
                         <br>${{ post.price }}
                     </a>
                 </li>

@@ -1,8 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700;900&display=swap');
 h1 {
     margin-bottom: 10px;
+    font-family: 'Kanit', sans-serif;
+    font-weight: 300;
+    color: white;
+    text-shadow: -1px 1px 2px #000,
+				  1px 1px 2px #000,
+				  1px -1px 0 #000,
+				  -1px -1px 0 #000;
 }
-.browse {
+.browse, .login-submit, .register {
     padding: 9px 25px;
     background-color: rgba(136,244,134,1);
     background-repeat: no-repeat;
@@ -13,6 +21,10 @@ h1 {
     transition: all 0.3s ease 0s;
 }
 
-.browse:hover {
+.browse:hover, .login-submit:hover, .register:hover {
     background-color: rgba(136,244,134,0.8);
+}
+
+.login-submit {
+    margin-bottom: 20px;
 }

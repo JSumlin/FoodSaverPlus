@@ -11,11 +11,15 @@
 <body>
     {% block content %}
       <h1>Welcome to Food Saver</h1>
-      <a class="browse" href="{{ url_for('browse', meal_id=0) }}">Browse</a>
-      <a class="browse" href="/find-store">Find A Store</a>
+      <a class="browse" href="{{ url_for('browse', meal_id=0, store_id=0) }}">Browse</a>
+      <!-- <a class="browse" href="/find-store">Find A Store</a> -->
       <a class="browse" href="/meals">Meal Suggestion</a>
       {% if not current_user.is_authenticated %}
         <a class="browse" href="/store-signup">Store Signup</a>
+      {%endif%}
+      {% if current_user.is_authenticated %}
+        <a class="browse" href="{{ url_for('add_item') }}">Add Item</a>
+        <a class="browse" href="{{ url_for('post_item') }}">Post Item</a>
       {%endif%}
     {% endblock %}
 </body>

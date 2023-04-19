@@ -9,7 +9,7 @@
 </head>
 <body>
   {% block content %}
-    <div><a class="bck" href=" {{ url_for('browse', meal_id=meal_id) }}">Back to Browse</a></div>
+    <div><a class="bck" href=" {{ url_for('browse', meal_id=meal_id, store_id=store_id) }}">Back to Browse</a></div>
     <div class="top">
       <div>
         <img class="itmimg" src="{{ url_for('static', filename=item.item_img) }}" alt=" {{ item.item_name }}">
@@ -18,6 +18,10 @@
         <form method="post">
           <label class="qlabel">Quantity:</label>
           <input type="number" class="quantity" name="quantity" value="1" min="1" max="{{ max }}">
+          <div class="rsvp-name-data">
+            <label class="nlabel">Name:</label>
+          <input type="text" class="name-input" name="name" required>
+          </div>
           <button type="submit" class="rsrv">Reserve</button>
         </form>
       </div>

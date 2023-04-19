@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Reservations{% endblock %} - FoodSaver+</title>
+  {% block head %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css')}}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/reservations-style.css')}}">
+  {%endblock%}
+</head>
+<body>
+  {% block content %}
+    <table style="border: 1px solid white">
+        <tr>
+            <th>Reservation ID</th>
+            <th>Name</th>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Reserved at</th>
+        </tr>
+        {% for rsvp, post, item in reservations %}
+                <tr>
+                    <td>{{ rsvp.rsvp_id }}</td>
+                    <td>{{ rsvp.rsvp_name }}</td>
+                    <td>{{ item.item_name }}</td>
+                    <td>{{ rsvp.rsvp_quantity }}</td>
+                    <td>{{ post.price }}</td>
+                    <td>{{ rsvp.rsvp_timestamp }}</td>
+                </tr>
+        {% endfor %}
+    </table>
+  {%endblock%}
+
+</body>
+</html>

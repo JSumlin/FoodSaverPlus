@@ -8,8 +8,8 @@
   {%endblock%}
 </head>
 <body>
-  {% block content %}
-    <div class="sidebar">
+ {% block content %}
+   <!-- <div class="sidebar">
       <ul>
         <li class="filter-title">Filters</li>
         <li class="filter-text">Price:</li>
@@ -23,19 +23,19 @@
           <input type="number" class="dateinput" name="day" placeholder="Day">
         </li>
       </ul>
-    </div>
+    </div> -->
     <div class="browse-body">
       <h1 style="margin-bottom: 10px;">Meal Suggestions</h1>
-      <div>
+     <!-- <div>
         <input type="text" name="search" placeholder="Search" class="search">
         <input type="text" name="ingredient" placeholder="Ingredient" class="ingredient">
         <a class="fndstr" href="#">Find Store</a>
-      </div>
+      </div> -->
       <ul class="browse-listings">
         {% for meal in meals %}
           <li class="listings">
-            <a href="{{ url_for('browse', meal_id=meal.meal_id) }}"><img class="list-img" src="{{ meal.meal_img }}"></a>
-            <div><a href="{{ url_for('browse', meal_id=meal.meal_id) }}" class="list_name">{{ meal.meal_name }}</a></div>
+            <a href="{{ url_for('browse', meal_id=meal.meal_id, store_id=0) }}"><img class="list-img" src="{{ meal.meal_img }}"></a>
+            <div><a href="{{ url_for('browse', meal_id=meal.meal_id, store_id=0) }}" class="list_name">{{ meal.meal_name }}</a></div>
           </li>
         {%endfor%}
       </ul>

@@ -69,12 +69,30 @@
     cursor: pointer;
 }
 
-.qlabel {
+.qlabel, .nlabel {
     font-family: 'Kanit', sans-serif;
     font-weight: 300;
     font-size: 32px;
     position: absolute;
     left: 10%;
+}
+
+.nlabel {
+    top:88px;
+}
+
+.name-input {
+    position: absolute;
+    left: calc(10% + 90px);
+    top:97px;
+    color: black;
+    position: absolute;
+    font-family: 'Kanit', sans-serif;
+    font-weight: 400;
+    font-size: 24px;
+    width: 350px;
+    height: 32px;
+    border-radius: 8px;
 }
 
 .quantity {

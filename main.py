@@ -4,7 +4,7 @@ from flask_login import login_required, current_user, LoginManager, login_user, 
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, CHAR, func, desc
+from sqlalchemy import create_engine, ForeignKey, Column, String, Integer, CHAR, func, desc, exists
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, join
 import os
@@ -20,7 +20,7 @@ import uuid as uuid
 
 
 # For SQLAlchemy to interact with SQLite
-engine = create_engine("sqlite:///foodsaverplus.db", echo=True)
+engine = create_engine("sqlite:///foodsaverplus.db")
 Session = sessionmaker(bind=engine)
 session = Session()
 
@@ -30,10 +30,11 @@ app.config["SECRET_KEY"] = str(os.urandom(24).hex())
 UPLOAD_FOLDER = 'static'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Login Controls
+# User authentication controls
 login_manager = LoginManager()
 login_manager.login_view = "login"
 login_manager.init_app(app)
+
 
 @login_manager.user_loader
 def load_user(store_id):
@@ -83,8 +84,9 @@ def index():
 
 # A browse page with a meal_id of 0 shows all posted items. Any number above that displays only ingredients for the
 # meal with that meal_id.
-@app.route('/browse/<int:meal_id>')
-def browse(meal_id):
+@app.route('/browse/<int:meal_id>/<int:store_id>', methods=['GET', 'POST'])
+def browse(meal_id, store_id):
+    # Labels posts which pass their sell-by date as inactive
     current_date = date.today()
     posts = session.query(UserPost).filter(UserPost.active == True).order_by(UserPost.exp_date).all()
     for post in posts:
@@ -92,22 +94,42 @@ def browse(meal_id):
             post.active = False
         elif post.exp_date > current_date:
             break
+
+    stores = session.query(Store).all()
+    print(stores)
     session.commit()
-    if meal_id == 0:
+    if meal_id == 0 and store_id == 0:
         # Joins "posts", "items", "recipes", and "stores" tables while getting the soonest expiration date for an item
         # posted at a given price point.
         posts = session.query(UserPost, Item, Recipe, Store, func.min(UserPost.exp_date)).select_from(UserPost).\
             join(Item, Item.item_id == UserPost.item_id).join(Recipe, Recipe.ing_id == Item.ing_id)\
             .join(Store, Store.store_id == Item.store_id).filter(UserPost.active == True)\
-            .group_by(UserPost.item_id, UserPost.price).all()
-    else:
+            .group_by(UserPost.item_id, UserPost.price).order_by(UserPost.exp_date).all()
+    elif store_id == 0:
         # Joins "posts", "items", "recipes", and "stores" tables while getting the soonest expiration date for an item
         # posted at a given price point, and filters that to ingredients of the chosen meal.
         posts = session.query(UserPost, Item, Recipe, Store, func.min(UserPost.exp_date)).select_from(UserPost)\
             .join(Item, Item.item_id == UserPost.item_id).join(Recipe, Recipe.ing_id == Item.ing_id)\
             .join(Store, Store.store_id == Item.store_id).filter(Recipe.meal_id == meal_id, UserPost.active == True)\
-            .group_by(UserPost.item_id, UserPost.price).all()
-    return render_template('browse.html', posts=posts, meal_id=meal_id)
+            .group_by(UserPost.item_id, UserPost.price).order_by(UserPost.exp_date).all()
+    elif meal_id == 0:
+        posts = session.query(UserPost, Item, Recipe, Store, func.min(UserPost.exp_date)).select_from(UserPost). \
+            join(Item, Item.item_id == UserPost.item_id).join(Recipe, Recipe.ing_id == Item.ing_id) \
+            .join(Store, Store.store_id == Item.store_id).filter(UserPost.active == True, Item.store_id == store_id) \
+            .group_by(UserPost.item_id, UserPost.price).order_by(UserPost.exp_date).all()
+    else:
+        posts = session.query(UserPost, Item, Recipe, Store, func.min(UserPost.exp_date)).select_from(UserPost) \
+            .join(Item, Item.item_id == UserPost.item_id).join(Recipe, Recipe.ing_id == Item.ing_id) \
+            .join(Store, Store.store_id == Item.store_id)\
+            .filter(Recipe.meal_id == meal_id, UserPost.active == True, Item.store_id == store_id)\
+            .group_by(UserPost.item_id, UserPost.price).order_by(UserPost.exp_date).all()
+    if request.method == 'POST':
+        chosen_store = session.query(Store).filter_by(store_id=request.form['store_filter']).first()
+        if chosen_store is None:
+            return redirect(url_for('browse', meal_id=meal_id, store_id=0))
+        else:
+            return redirect(url_for('browse', meal_id=meal_id, store_id=chosen_store.store_id))
+    return render_template('browse.html', posts=posts, store_id=store_id, meal_id=meal_id, stores=stores)
 
 
 @app.route('/meals')
@@ -121,8 +143,8 @@ def find_store():
     return render_template('find-store.html')
 
 
-@app.route('/browse/<int:meal_id>/<int:post_id>', methods=('GET', 'POST'))
-def view_item(meal_id, post_id):
+@app.route('/browse/<int:meal_id>/<int:store_id>/<int:post_id>', methods=('GET', 'POST'))
+def view_item(meal_id, store_id, post_id):
     post = session.query(UserPost).filter_by(post_id=post_id).first()
     item = session.query(Item).filter_by(item_id=post.item_id).first()
     viewed_posts = get_viewed_posts(post)
@@ -139,29 +161,32 @@ def view_item(meal_id, post_id):
         # Atomic transaction subtracting the appropriate quantity from the "posts" table and adding it to the
         # "reservations" table. Also labels posts as inactive if their quantity reaches 0.
         try:
+            viewed_store_id = 0
             for viewed_post, viewed_item in viewed_posts:
                 if rsvp_quantity >= int(viewed_post.post_quantity):
-                    session.add(Reservation(viewed_post.post_id, viewed_post.post_quantity))
+                    session.add(Reservation(viewed_post.post_id, request.form['name'], viewed_post.post_quantity))
                     rsvp_quantity = rsvp_quantity - int(viewed_post.post_quantity)
                     viewed_post.post_quantity = 0
                     viewed_post.active = False
                 else:
                     viewed_post.post_quantity = viewed_post.post_quantity - rsvp_quantity
-                    session.add(Reservation(viewed_post.post_id, rsvp_quantity))
+                    session.add(Reservation(viewed_post.post_id, request.form['name'], rsvp_quantity))
                     rsvp_quantity = 0
                 if rsvp_quantity == 0:
+                    viewed_store_id = viewed_item.store_id
                     break
             session.commit()
-            return redirect(url_for('rsvp_conf'))
+            return redirect(url_for('rsvp_conf', store_id=viewed_store_id))
         except sqlite3.Error():
             flash("An error occurred while placing your reservation. Please Try again.")
 
-    return render_template('view-item.html', post=post, item=item, meal_id=meal_id, max=max_quantity)
+    return render_template('view-item.html', post=post, item=item, meal_id=meal_id, max=max_quantity, store_id=store_id)
 
 
-@app.route('/reservation-confirmation')
-def rsvp_conf():
-    return render_template('RsvpConfirmation.html')
+@app.route('/reservation-confirmation/<int:store_id>')
+def rsvp_conf(store_id):
+    store = session.query(Store).filter_by(store_id=store_id).first()
+    return render_template('RsvpConfirmation.html', store=store)
 
 
 @app.route('/add-item', methods=('GET', 'POST'))
@@ -192,6 +217,9 @@ def post_new():
 def post_item():
     items = session.query(Item).filter_by(store_id=current_user.store_id).all()
     if request.method == 'POST':
+        dateinput = datetime.strptime(request.form["exp_date"], '%Y-%m-%d')
+        if dateinput.date() < date.today():
+            return render_template('post-item.html', items=items)
         UserPost.add_post(session, request.form["item"], request.form["quantity"], request.form["price"],
                           request.form["exp_date"])
         return redirect(url_for('post_conf'))
@@ -233,13 +261,31 @@ def store_signup():
     return render_template('/storesignup.html', inputs=inputs)
 
 
-@app.route('/profile')
+@app.route('/reservations')
 @login_required
-def profile():
-    return render_template('profile.html', name=current_user.username)
+def reservations():
+    reservations = session.query(Reservation, UserPost, Item).select_from(Reservation)\
+        .join(UserPost, UserPost.post_id == Reservation.post_id).join(Item, Item.item_id == UserPost.item_id)\
+        .filter(Item.store_id == current_user.store_id).all()
+    return render_template('reservations.html', reservations=reservations)
+
+
+# app.run(debug=True)
 
 # item = session.query(Item).first()
 # item.item_img = 'Images/' + item.item_img
 # session.commit()
 # print(date.today())
-app.run(debug=True)
+
+
+# item1 = session.query(Item).filter_by(item_id=5).first()
+# item1.item_img = "Images/kroger ground beef.png"
+# item2 = session.query(Item).filter_by(item_id=3).first()
+# item2.item_name = "test name"
+# session.commit()
+print(session.query(Reservation).all())
+# meal1 = session.query(Meal).filter_by(meal_name="Tacos").first()
+# meal1.meal_img = "../static/Images/tacos.jpg"
+# meal2 = meal1 = session.query(Meal).filter_by(meal_name="Spaghetti").first()
+# meal2.meal_img = "../static/Images/Spaghetti-meal.png"
+# session.commit()
