@@ -9,7 +9,7 @@
 </head>
 <body>
   {% block content %}
-    <div><a class="bck" href=" {{ url_for('browse', meal_id=meal_id, store_id=store_id) }}">Back to Browse</a></div>
+    <div><a class="bck" href=" {{ url_for('browse.browse_posts', meal_id=meal_id, store_id=store_id) }}">Back to Browse</a></div>
     <div class="top">
       <div>
         <img class="itmimg" src="{{ url_for('static', filename=item.item_img) }}" alt=" {{ item.item_name }}">

@@ -9,8 +9,10 @@ Originally intended to utilize MySQL and React when submitting this project, but
 Purpose:
 A mock web-based marketplace where soon-to-be expired food is posted at a highly discounted rate. Stores sign up and post their food. Customers don't sign up; they place a reservation and pick the item up from the store. Payment is handled at the store.
 
-Utilizies:
+Utilizes:
 Python, Flask, SQLite, SQLAlchemy, HTML/CSS.
+
+Test login: The username is 'username' and the password is 'password'.
 
 TO-DO:
 
@@ -18,9 +20,11 @@ TO-DO:
 
 10). Implement Browse filters (Low priority)
 
-13). Clean up, comment, and refactor code. (Low priority for now. Functionality is most important at the moment.)
+13). Clean up, comment, and refactor code. (High priority)
 
-14). Have customers enter a name when reserving items. (Low priority)
+15). Users are able to view/reserve old items by manually entering the url for old posts. Needs fixing (Low priority)
+
+16). Allow users to view, edit, and delete their posts and items in a centralized location. (Low priority)
 
 COMPLETED:
 
@@ -42,3 +46,5 @@ separately.
 12). Users can now upload images for their items.
 
 7). Web page designs fixed. Could use aesthetic improvement, but they are functional.
+
+14). Customers now enter their name for reservations.

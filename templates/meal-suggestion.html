@@ -34,8 +34,8 @@
       <ul class="browse-listings">
         {% for meal in meals %}
           <li class="listings">
-            <a href="{{ url_for('browse', meal_id=meal.meal_id, store_id=0) }}"><img class="list-img" src="{{ meal.meal_img }}"></a>
-            <div><a href="{{ url_for('browse', meal_id=meal.meal_id, store_id=0) }}" class="list_name">{{ meal.meal_name }}</a></div>
+            <a href="{{ url_for('browse.browse_posts', meal_id=meal.meal_id, store_id=0) }}"><img class="list-img" src="{{ meal.meal_img }}"></a>
+            <div><a href="{{ url_for('browse.browse_posts', meal_id=meal.meal_id, store_id=0) }}" class="list_name">{{ meal.meal_name }}</a></div>
           </li>
         {%endfor%}
       </ul>

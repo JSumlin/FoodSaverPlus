@@ -8,23 +8,16 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask
 from flask_login import UserMixin
 
+
+# For SQLAlchemy to interact with SQLite
+engine = create_engine("sqlite:///foodsaverplus.db")
+Session = sessionmaker(bind=engine)
+session = Session()
+
+
 # Uses SQLAlchemy to create the database and table objects.
-
 Base = declarative_base()
-# engine = create_engine("sqlite:///foodsaverplus.db", echo=True)
-# connection = engine.connect()
-#
-# table_name = 'posts'
-#
-# query = f'ALTER TABLE {table_name} MODIFY ;'
-# connection.execute(query)
 
-# conn = sqlite3.connect('flowershopdatabase.db', check_same_thread=False)
-# conn.execute("PRAGMA foreign_keys = 1")
-# conn.execute("ALTER TABLE posts DROP CONSTRAINT post_quantity>0")
-# conn.execute("ALTER TABLE posts ADD CONSTRAINT post_quantity>=0")
-# cursor = conn.cursor()
-# conn.commit()
 
 class Store(UserMixin, Base):
 
@@ -216,40 +209,3 @@ class Reservation(Base):
 
     def __repr__(self):
         return f"({self.rsvp_id}, {self.rsvp_name}, {self.post_id}, {self.rsvp_quantity}, {self.rsvp_timestamp})"
-
-
-# engine = create_engine("sqlite:///foodsaverplus.db", echo=True)
-# Base.metadata.create_all(bind=engine)
-#
-# Session = sessionmaker(bind=engine)
-# session = Session()
-
-# Reservation.__table__.drop(engine)
-
-# class Res(Base):
-#     __tablename__ = "res"
-#     rsvp_id = Column("rsvp_id", Integer, Identity(start=0, cycle=True), primary_key=True, nullable=False)
-#     post_id = Column("post_id", Integer, ForeignKey("posts.post_id"), nullable=False)
-#     rsvp_quantity = Column("rsvp_quantity", Integer, CheckConstraint("rsvp_quantity>0"), nullable=False)
-#     rsvp_timestamp = Column("rsvp_timestamp", DateTime, nullable=False)
-#
-#     def __init__(self, post_id, rsvp_quantity, rsvp_timestamp):
-#         self.post_id = post_id
-#         self.rsvp_quantity = rsvp_quantity
-#         self.rsvp_timestamp = rsvp_timestamp
-#
-#     def __repr__(self):
-#         return f"({self.rsvp_id}, {self.post_id}, {self.rsvp_quantity}, {self.rsvp_timestamp})"
-
-
-# class Rsvp_Name (Base):
-#     __tablename__ = "rsvp_name"
-#     rsvp_id = Column("rsvp_id", Integer, primary_key=True, nullable=False)
-#     rsvp_name = Column("rsvp_name", String, nullable=False)
-#
-#     def __init__(self, rsvp_id, rsvp_name):
-#         self.rsvp_id = rsvp_id
-#         self.rsvp_name = rsvp_name
-#
-#     def __repr__(self):
-#         return f"({self.rsvp_id}, {self.rsvp_name})"
